@@ -23,7 +23,7 @@ jobs:
       # Build
       - name: Build NuGet package
         run: >-
-          dotnet pack ./IPPDotNetDevKitCSV3/Code/Intuit.Ipp.Nupkg/Intuit.Ipp.Nupkg.csproj
+          dotnet pack ./Intuit.Ipp.Nupkg/Intuit.Ipp.Nupkg.csproj
           "-p:Platform=Any CPU"
           -p:RepositoryUrl=https://github.com/ApprovalMax/approvalmax-product
           -p:Company=ApprovalMax
