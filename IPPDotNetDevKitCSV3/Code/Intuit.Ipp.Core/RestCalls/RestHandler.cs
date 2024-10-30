@@ -132,7 +132,6 @@ namespace Intuit.Ipp.Core.Rest
         {
             //initialize the Advanced logger
             CoreHelper.AdvancedLogging = CoreHelper.GetAdvancedLogging(this.serviceContext);
-            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(TraceLevel.Info, "Called PrepareRequest method");
 
             // This step is required since the configuration settings might have been changed.
             this.RequestCompressor = CoreHelper.GetCompressor(this.serviceContext, true);
@@ -279,12 +278,6 @@ namespace Intuit.Ipp.Core.Rest
                     {
                         content = streamRequestBody.ToArray();
                     }
-
-
-                    TraceSwitch traceSwitch = new TraceSwitch("IPPTraceSwitch", "IPP Trace Switch");
-                    
-                    // Set the request properties.
-                    this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(TraceLevel.Info, (int)traceSwitch.Level > (int)TraceLevel.Info ? "Adding the payload to request.\n Start dump: \n" + requestXML.ToString() : "Adding the payload to request.");
 
                     if (content != null)
                     {

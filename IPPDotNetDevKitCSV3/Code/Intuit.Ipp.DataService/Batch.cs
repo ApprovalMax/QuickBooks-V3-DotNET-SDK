@@ -406,8 +406,6 @@ namespace Intuit.Ipp.DataService
         /// </summary>
         public void Execute()
         {
-            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Started Executing Method Execute for Batch");
-
             // Create Intuit Batch Request
             IntuitBatchRequest intuitBatchRequest = new IntuitBatchRequest();
             intuitBatchRequest.BatchItemRequest = this.batchRequests.ToArray<BatchItemRequest>();
@@ -442,7 +440,6 @@ namespace Intuit.Ipp.DataService
 
             // de serialize object
             IntuitResponse restResponse = (IntuitResponse)this.responseSerializer.Deserialize<IntuitResponse>(response);
-            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Finished Execute method for batch.");
             foreach (object obj in restResponse.AnyIntuitObjects)
             {
                 BatchItemResponse batchItemResponse = obj as BatchItemResponse;
@@ -458,7 +455,6 @@ namespace Intuit.Ipp.DataService
         /// </summary>
         public void ExecuteAsync()
         {
-            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Started Executing Method ExecuteAsync for Batch");
             AsyncRestHandler asyncRestHandler = new AsyncRestHandler(this.serviceContext);
             asyncRestHandler.OnCallCompleted += new EventHandler<AsyncCallCompletedEventArgs>(this.BatchAsyncompleted);
             BatchExecutionCompletedEventArgs batchCompletedEventArgs = new BatchExecutionCompletedEventArgs();
