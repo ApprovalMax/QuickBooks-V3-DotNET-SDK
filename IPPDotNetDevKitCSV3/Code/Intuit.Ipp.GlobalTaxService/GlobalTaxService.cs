@@ -110,9 +110,6 @@ namespace Intuit.Ipp.GlobalTaxService
         /// <returns>Returns an updated version of the entity with updated identifier.</returns>
         public Intuit.Ipp.Data.TaxService AddTaxCode(Intuit.Ipp.Data.TaxService taxCode)
         {
-            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Called Method AddTaxCode for TaxService.");
-
-       
             // Validate parameter
             if (!GlobalTaxServiceHelper.IsTypeNull(taxCode))
             {
@@ -157,7 +154,6 @@ namespace Intuit.Ipp.GlobalTaxService
 
             // de serialize object
             IntuitResponse restResponse = (IntuitResponse)CoreHelper.GetSerializer(this.serviceContext, false).Deserialize<IntuitResponse>(response);             
-            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Finished Executing Method Add.");
             return (Intuit.Ipp.Data.TaxService)(restResponse.AnyIntuitObject as Intuit.Ipp.Data.TaxService);
             
             
@@ -174,10 +170,7 @@ namespace Intuit.Ipp.GlobalTaxService
         /// <param name="taxCode">TaxCode to Add.</param>        
         public void AddTaxCodeAsync(Intuit.Ipp.Data.TaxService taxCode)
         {
-            Console.Write("AddAsync started \n");
-            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Called Method Add Asynchronously.");
             GlobalTaxServiceCallCompletedEventArgs<Intuit.Ipp.Data.TaxService> callCompletedEventArgs = new GlobalTaxServiceCallCompletedEventArgs<Intuit.Ipp.Data.TaxService>();
-            Console.Write("callCompletedEventArgs instantiated \n");
            
             if (!GlobalTaxServiceHelper.IsTypeNull(taxCode))
             {
@@ -215,7 +208,6 @@ namespace Intuit.Ipp.GlobalTaxService
         /// <param name="eventArgs">callback event arguments</param>
         private void AddTaxCodeAsyncCompleted(object sender, GlobalTaxServiceCallCompletedEventArgs<Intuit.Ipp.Data.TaxService> eventArgs)
         {
-            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Finished Executing Method AddTaxCode Async.");
             this.OnAddTaxCodeAsyncCompleted(sender, eventArgs);
         }
     }

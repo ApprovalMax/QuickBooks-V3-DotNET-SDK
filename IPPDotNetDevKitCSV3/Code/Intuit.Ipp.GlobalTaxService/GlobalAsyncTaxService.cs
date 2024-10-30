@@ -83,7 +83,6 @@ namespace Intuit.Ipp.GlobalTaxService
         /// <param name="taxCode">Entity to Add</param>
         public void AddTaxCodeAsync(Intuit.Ipp.Data.TaxService taxCode)
         {
-            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Called Method Add Asynchronously.");
             AsyncRestHandler asyncRestHandler = new AsyncRestHandler(this.serviceContext);
             asyncRestHandler.OnCallCompleted += new EventHandler<AsyncCallCompletedEventArgs>(this.AddTaxCodeAsyncCompleted);
             GlobalTaxServiceCallCompletedEventArgs<Intuit.Ipp.Data.TaxService> taxServiceCallCompletedEventArgs = new GlobalTaxServiceCallCompletedEventArgs<Intuit.Ipp.Data.TaxService>();
@@ -155,7 +154,6 @@ namespace Intuit.Ipp.GlobalTaxService
                     IEntitySerializer responseSerializer = CoreHelper.GetSerializer(this.serviceContext, false);
                     IntuitResponse restResponse = (IntuitResponse)responseSerializer.Deserialize<IntuitResponse>(eventArgs.Result);
                     taxServiceCallCompletedEventArgs.TaxService = restResponse.AnyIntuitObject as Intuit.Ipp.Data.TaxService;
-                    this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Finished Executing event AddTaxCodeAsyncCompleted in AyncService object.");
                     this.OnAddTaxCodeAsyncCompleted(this, taxServiceCallCompletedEventArgs);
                 }
                 catch (SystemException systemException)

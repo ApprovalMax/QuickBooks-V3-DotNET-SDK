@@ -197,8 +197,6 @@ namespace Intuit.Ipp.DataService
         /// <returns>Returns an updated version of the entity with updated identifier and sync token.</returns>
         public T Add<T>(T entity) where T : IEntity
         {
-            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Called Method Add.");
-
             // Validate parameter
             if (!ServicesHelper.IsTypeNull(entity))
             {
@@ -245,7 +243,6 @@ namespace Intuit.Ipp.DataService
 
             // de serialize object
             IntuitResponse restResponse = (IntuitResponse)CoreHelper.GetSerializer(this.serviceContext, false).Deserialize<IntuitResponse>(response);
-            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Finished Executing Method Add.");
             return (T)(restResponse.AnyIntuitObject as IEntity);
         }
 
@@ -259,8 +256,6 @@ namespace Intuit.Ipp.DataService
         /// <param name="entity">Entity to Delete.</param>
         public T Delete<T>(T entity) where T : IEntity
         {
-            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Called Method Delete.");
-
             // Validate parameter
             if (!ServicesHelper.IsTypeNull(entity))
             {
@@ -314,8 +309,6 @@ namespace Intuit.Ipp.DataService
                 this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Error, string.Format(CultureInfo.InvariantCulture, Resources.ExceptionGeneratedMessage, exception.ToString()));
                 IdsExceptionManager.HandleException(exception);
             }
-
-            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Finished Executing Method Void.");
             return (T)(restResponse.AnyIntuitObject as IEntity);
         }
 
@@ -327,8 +320,6 @@ namespace Intuit.Ipp.DataService
         /// <returns name="T">Returns the voided entity</returns>
         public T Void<T>(T entity) where T : IEntity
         {
-            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Called Method Void.");
-
             // Validate parameter
             if (!ServicesHelper.IsTypeNull(entity))
             {
@@ -385,7 +376,6 @@ namespace Intuit.Ipp.DataService
                 }
             }
 
-            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Finished Executing Method Void.");
             return (T)(restResponse.AnyIntuitObject as IEntity);
         }
         #endregion
@@ -400,8 +390,6 @@ namespace Intuit.Ipp.DataService
         /// <returns>Returns an updated version of the entity with updated identifier and sync token.</returns>
         public T Update<T>(T entity) where T : IEntity
         {
-            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Called Method Update.");
-
             // Validate parameter
             if (!ServicesHelper.IsTypeNull(entity))
             {
@@ -447,7 +435,6 @@ namespace Intuit.Ipp.DataService
 
             // de serialize object
             IntuitResponse restResponse = (IntuitResponse)CoreHelper.GetSerializer(this.serviceContext, false).Deserialize<IntuitResponse>(response);
-            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Finished Executing Method Add.");
             return (T)(restResponse.AnyIntuitObject as IEntity);
         }
 
@@ -463,8 +450,6 @@ namespace Intuit.Ipp.DataService
         /// <returns>Returns an updated version of the entity with updated identifier and sync token.</returns>
         public T UpdateAccountOnTxns<T>(T entity) where T : IEntity
         {
-            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Called Method Add.");
-
             // Validate parameter
             if (!ServicesHelper.IsTypeNull(entity))
             {
@@ -507,7 +492,6 @@ namespace Intuit.Ipp.DataService
 
             // de serialize object
             IntuitResponse restResponse = (IntuitResponse)CoreHelper.GetSerializer(this.serviceContext, false).Deserialize<IntuitResponse>(response);
-            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Finished Executing Method Add.");
             return (T)(restResponse.AnyIntuitObject as IEntity);
         }
 
@@ -523,8 +507,6 @@ namespace Intuit.Ipp.DataService
         /// <returns>Returns an updated version of the entity with updated identifier and sync token.</returns>
         public T DoNotUpdateAccountOnTxns<T>(T entity) where T : IEntity
         {
-            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Called Method Add.");
-
             // Validate parameter
             if (!ServicesHelper.IsTypeNull(entity))
             {
@@ -567,7 +549,6 @@ namespace Intuit.Ipp.DataService
 
             // de serialize object
             IntuitResponse restResponse = (IntuitResponse)CoreHelper.GetSerializer(this.serviceContext, false).Deserialize<IntuitResponse>(response);
-            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Finished Executing Method Add.");
             return (T)(restResponse.AnyIntuitObject as IEntity);
         }
 
@@ -592,8 +573,6 @@ namespace Intuit.Ipp.DataService
                 this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Error, string.Format(CultureInfo.InvariantCulture, Resources.ExceptionGeneratedMessage, exception.ToString()));
                 IdsExceptionManager.HandleException(exception);
             }
-
-            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Called Method GetPdf by " + entity.GetType().FullName);
 
             string id = string.Empty;
             string resourceString = entity.GetType().Name.ToLower(CultureInfo.InvariantCulture);
@@ -676,8 +655,6 @@ namespace Intuit.Ipp.DataService
                 this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Error, string.Format(CultureInfo.InvariantCulture, Resources.ExceptionGeneratedMessage, exception.ToString()));
                 IdsExceptionManager.HandleException(exception);
             }
-
-            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Called Method SendEmail by " + entity.GetType().FullName);
 
             string id = string.Empty;
             string resourceString = entity.GetType().Name.ToLower(CultureInfo.InvariantCulture);
@@ -799,8 +776,6 @@ namespace Intuit.Ipp.DataService
         /// <returns> Returns an entity of specified Id.</returns> 
         public T FindById<T>(T entity) where T : IEntity
         {
-            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Called Method FindById.");
-
             // Validate parameter
             if (!ServicesHelper.IsTypeNull(entity))
             {
@@ -902,8 +877,6 @@ namespace Intuit.Ipp.DataService
         /// <returns></returns>
         public ReadOnlyCollection<T> FindByParentId<T>(T entity) where T : IEntity
         {
-            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Called Method FindByParentId.");
-
             ServicesHelper.ValidateEntity(entity, serviceContext);
             ServicesHelper.ValidateEntityType(entity, "TaxClassification", serviceContext);
 
@@ -926,8 +899,6 @@ namespace Intuit.Ipp.DataService
 
             List<T> entities = PrepareAndExecuteHttpRequest<T>(uri);
 
-            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Finished Executing Method FindByParentId.");
-
             ReadOnlyCollection<T> readOnlyCollection = new ReadOnlyCollection<T>(entities);
             return readOnlyCollection;
         }
@@ -940,8 +911,6 @@ namespace Intuit.Ipp.DataService
         /// <returns></returns>
         public ReadOnlyCollection<T> FindByLevel<T>(T entity) where T : IEntity
         {
-            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Called Method FindByLevel.");
-
             // Validate parameter
             ServicesHelper.ValidateEntity(entity, serviceContext);
             ServicesHelper.ValidateEntityType(entity, "TaxClassification", serviceContext);
@@ -963,8 +932,6 @@ namespace Intuit.Ipp.DataService
 
             List<T> entities = PrepareAndExecuteHttpRequest<T>(uri);
 
-            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Finished Executing Method FindByLevel.");
-
             ReadOnlyCollection<T> readOnlyCollection = new ReadOnlyCollection<T>(entities);
             return readOnlyCollection;
         }
@@ -979,8 +946,6 @@ namespace Intuit.Ipp.DataService
         /// <returns> Returns the list of entities.</returns>
         public ReadOnlyCollection<T> FindAll<T>(T entity, int startPosition = 1, int maxResults = 500) where T : IEntity
         {
-            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Called Method FindAll.");
-
             ServicesHelper.ValidateEntity(entity, serviceContext);
             string resourceString = entity.GetType().Name;
 
@@ -1085,8 +1050,6 @@ namespace Intuit.Ipp.DataService
                 //return readOnlyCollection;
             }
 
-            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Finished Executing Method FindAll.");
-
             ReadOnlyCollection<T> readOnlyCollection = new ReadOnlyCollection<T>(entities);
             return readOnlyCollection;
         }
@@ -1117,8 +1080,6 @@ namespace Intuit.Ipp.DataService
         /// <returns> Returns an IntuitCDCResponse.</returns> 
         public IntuitCDCResponse CDC(List<IEntity> entityList, DateTime changedSince)
         {
-            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Called Method CDC.");
-
             // Validate parameter
             if (entityList.Count <= 0)
             {
@@ -1212,7 +1173,6 @@ namespace Intuit.Ipp.DataService
                 }
             }
 
-            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Finished Executing Method CDC.");
             return returnValue;
         }
 
@@ -1230,7 +1190,6 @@ namespace Intuit.Ipp.DataService
         /// <param name="maxResults">The max results.</param>
         public void FindAllAsync<T>(T entity, int startPosition = 1, int maxResults = 500) where T : IEntity
         {
-            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Called Method FindAll Asynchronously.");
             FindAllCallCompletedEventArgs findAllCompletedEventArgs = new FindAllCallCompletedEventArgs();
             //// Validate parameter
             if (!ServicesHelper.IsTypeNull(entity))
@@ -1301,7 +1260,6 @@ namespace Intuit.Ipp.DataService
         /// <param name="entity"></param>
         public void FindByLevelAsync<T>(T entity) where T : IEntity
         {
-            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Called Method FindByLevelAsync.");
             FindAllCallCompletedEventArgs callCompletedEventArgs = new FindAllCallCompletedEventArgs();
 
             try
@@ -1326,7 +1284,6 @@ namespace Intuit.Ipp.DataService
         /// <param name="entity"></param>
         public void FindByParentIdAsync<T>(T entity) where T : IEntity
         {
-            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Called Method FindByParentIdAsync.");
             FindAllCallCompletedEventArgs callCompletedEventArgs = new FindAllCallCompletedEventArgs();
 
             try
@@ -1351,7 +1308,6 @@ namespace Intuit.Ipp.DataService
         /// <param name="entity">Instance of entity to find</param>
         public void FindByIdAsync<T>(T entity) where T : IEntity
         {
-            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Called Method FindById Asynchronously.");
             CallCompletedEventArgs<IEntity> callCompletedEventArgs = new CallCompletedEventArgs<IEntity>();
             if (!ServicesHelper.IsTypeNull(entity))
             {
@@ -1385,7 +1341,6 @@ namespace Intuit.Ipp.DataService
         /// <param name="entity">Entity to be returned as pdf bytes (entities of type Sales Receipt, Invoice and Estimate are supported to be returned as pdf).</param>
         public void GetPdfAsync<T>(T entity) where T : IEntity
         {
-            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Called Method GetPdf Asynchronously.");
             PdfCallCompletedEventArgs pdfCallCompletedEventArgs = new PdfCallCompletedEventArgs();
             if (!ServicesHelper.IsTypeNull(entity))
             {
@@ -1423,7 +1378,6 @@ namespace Intuit.Ipp.DataService
         /// <param name="sendToEmail">Optional parameter to specify an email address</param>
         public void SendEmailAsync<T>(T entity, String sendToEmail = null) where T : IEntity
         {
-            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Called Method SendEmail Asynchronously.");
             CallCompletedEventArgs<IEntity> callCompletedEventArgs = new CallCompletedEventArgs<IEntity>();
             if (!ServicesHelper.IsTypeNull(entity))
             {
@@ -1497,7 +1451,6 @@ namespace Intuit.Ipp.DataService
         /// <param name="changedSince">date after which entities changed.</param>
         public void CDCAsync(List<IEntity> entityList, DateTime changedSince)
         {
-            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Called Method CDC Asynchronously.");
             CDCCallCompletedEventArgs cdcCompletedEventArgs = new CDCCallCompletedEventArgs();
             //// Validate parameter
             if (entityList.Count <= 0)
@@ -1534,10 +1487,7 @@ namespace Intuit.Ipp.DataService
         /// <param name="entity">Instance of entity to be added</param>
         public void AddAsync<T>(T entity) where T : IEntity
         {
-            Console.Write("AddAsync started \n");
-            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Called Method Add Asynchronously.");
             CallCompletedEventArgs<IEntity> callCompletedEventArgs = new CallCompletedEventArgs<IEntity>();
-            Console.Write("callCompletedEventArgs instantiated \n");
             if (!ServicesHelper.IsTypeNull(entity))
             {
                 IdsException exception = new IdsException(Resources.ParameterNotNullMessage, new ArgumentNullException(Resources.EntityString));
@@ -1574,7 +1524,6 @@ namespace Intuit.Ipp.DataService
         /// <param name="entity">Instance of entity to Delete</param>
         public void DeleteAsync<T>(T entity) where T : IEntity
         {
-            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Called Method delete Asynchronously.");
             CallCompletedEventArgs<IEntity> callCompletedEventArgs = new CallCompletedEventArgs<IEntity>();
             if (!ServicesHelper.IsTypeNull(entity))
             {
@@ -1608,7 +1557,6 @@ namespace Intuit.Ipp.DataService
         /// <param name="entity">Entity to Void (only entities of type Sales Receipt and Payment are supported to be voided)</param>
         public void VoidAsync<T>(T entity) where T : IEntity
         {
-            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Called Method Void Asynchronously.");
             CallCompletedEventArgs<IEntity> callCompletedEventArgs = new CallCompletedEventArgs<IEntity>();
             if (!ServicesHelper.IsTypeNull(entity))
             {
@@ -1646,7 +1594,6 @@ namespace Intuit.Ipp.DataService
         /// <param name="entity">Returns an updated version of the entity with updated identifier and sync token</param>
         public void UpdateAsync<T>(T entity) where T : IEntity
         {
-            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Called Method Update Asynchronously.");
             CallCompletedEventArgs<IEntity> callCompletedEventArgs = new CallCompletedEventArgs<IEntity>();
             if (!ServicesHelper.IsTypeNull(entity))
             {
@@ -1683,7 +1630,6 @@ namespace Intuit.Ipp.DataService
         /// <param name="entity">Returns an updated version of the entity with updated identifier and sync token</param>
         public void UpdateAccAsync<T>(T entity) where T : IEntity
         {
-            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Called Method Update account Asynchronously.");
             CallCompletedEventArgs<IEntity> callCompletedEventArgs = new CallCompletedEventArgs<IEntity>();
             if (!ServicesHelper.IsTypeNull(entity))
             {
@@ -1723,7 +1669,6 @@ namespace Intuit.Ipp.DataService
         /// <param name="entity">Returns an updated version of the entity with updated identifier and sync token</param>
         public void DoNotUpdateAccAsync<T>(T entity) where T : IEntity
         {
-            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Called Method Not Update account Asynchronously.");
             CallCompletedEventArgs<IEntity> callCompletedEventArgs = new CallCompletedEventArgs<IEntity>();
             if (!ServicesHelper.IsTypeNull(entity))
             {
@@ -1782,7 +1727,6 @@ namespace Intuit.Ipp.DataService
         /// <param name="eventArgs">callback event arguments</param>
         private void FindAllAsyncCompleted(object sender, FindAllCallCompletedEventArgs eventArgs)
         {
-            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Finished Executing Method FindAllAsync.");
             this.OnFindAllAsyncCompleted(sender, eventArgs);
         }
 
@@ -1793,7 +1737,6 @@ namespace Intuit.Ipp.DataService
         /// <param name="eventArgs">callback event arguments</param>
         private void FindByIdAsynCompleted(object sender, CallCompletedEventArgs<IEntity> eventArgs)
         {
-            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Finished Executing Method FindByIdAsync.");
             this.OnFindByIdAsyncCompleted(sender, eventArgs);
         }
 
@@ -1804,7 +1747,6 @@ namespace Intuit.Ipp.DataService
         /// <param name="eventArgs"></param>
         private void FindByLevelAsyncCompleted(object sender, FindAllCallCompletedEventArgs eventArgs)
         {
-            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Finished Executing Method FindByLevelAsyncCompleted.");
             this.OnFindByLevelAsyncCompleted(sender, eventArgs);
         }
 
@@ -1815,7 +1757,6 @@ namespace Intuit.Ipp.DataService
         /// <param name="eventArgs"></param>
         private void FindByParentIdAsyncCompleted(object sender, FindAllCallCompletedEventArgs eventArgs)
         {
-            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Finished Executing Method FindByParentIdAsyncCompleted.");
             this.OnFindByParentIdAsyncCompleted(sender, eventArgs);
         }
 
@@ -1826,7 +1767,6 @@ namespace Intuit.Ipp.DataService
         /// <param name="eventArgs">callback event arguments</param>
         private void GetPdfAsynCompleted(object sender, PdfCallCompletedEventArgs eventArgs)
         {
-            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Finished Executing Method GetPdfAsync.");
             this.OnGetPdfAsyncCompleted(sender, eventArgs);
         }
 
@@ -1837,7 +1777,6 @@ namespace Intuit.Ipp.DataService
         /// <param name="eventArgs">callback event arguments</param>
         private void SendEmailAsynCompleted(object sender, CallCompletedEventArgs<IEntity> eventArgs)
         {
-            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Finished Executing Method SendEmail.");
             this.OnSendEmailAsyncCompleted(sender, eventArgs);
         }
 
@@ -1848,7 +1787,6 @@ namespace Intuit.Ipp.DataService
         /// <param name="eventArgs">callback event arguments</param>
         private void AddAsyncCompleted(object sender, CallCompletedEventArgs<IEntity> eventArgs)
         {
-            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Finished Executing Method add Async.");
             this.OnAddAsyncCompleted(sender, eventArgs);
         }
 
@@ -1859,7 +1797,6 @@ namespace Intuit.Ipp.DataService
         /// <param name="eventArgs">callback event arguments</param>
         private void DeleteAsyncCompleted(object sender, CallCompletedEventArgs<IEntity> eventArgs)
         {
-            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Finished Executing Method Delete Asyn.");
             this.OnDeleteAsyncCompleted(sender, eventArgs);
         }
 
@@ -1870,7 +1807,6 @@ namespace Intuit.Ipp.DataService
         /// <param name="eventArgs">callback event arguments</param>
         private void VoidAsyncCompleted(object sender, CallCompletedEventArgs<IEntity> eventArgs)
         {
-            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Finished Executing Method VoidAsync.");
             this.OnVoidAsyncCompleted(sender, eventArgs);
         }
 
@@ -1881,7 +1817,6 @@ namespace Intuit.Ipp.DataService
         /// <param name="eventArgs">callback event arguments</param>
         private void UpdateAsyncCompleted(object sender, CallCompletedEventArgs<IEntity> eventArgs)
         {
-            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Finished Executing Method UpdateAsync.");
             this.OnUpdateAsyncCompleted(sender, eventArgs);
         }
 
@@ -1892,7 +1827,6 @@ namespace Intuit.Ipp.DataService
         /// <param name="eventArgs">callback event arguments</param>
         private void UpdateAccAsyncCompleted(object sender, CallCompletedEventArgs<IEntity> eventArgs)
         {
-            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Finished Executing Method UpdateAccAsync.");
             this.OnUpdateAccAsyncCompleted(sender, eventArgs);
         }
 
@@ -1903,7 +1837,6 @@ namespace Intuit.Ipp.DataService
         /// <param name="eventArgs">callback event arguments</param>
         private void DoNotUpdateAccAsyncCompleted(object sender, CallCompletedEventArgs<IEntity> eventArgs)
         {
-            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Finished Executing Method DoNotUpdateaccAsync.");
             this.OnDoNotUpdateAccAsyncCompleted(sender, eventArgs);
         }
 
@@ -1914,7 +1847,6 @@ namespace Intuit.Ipp.DataService
         /// <param name="eventArgs">callback event arguments</param>
         private void CDCAsyncCompleted(object sender, CDCCallCompletedEventArgs eventArgs)
         {
-            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Finished Executing Method CDCAsync.");
             this.OnCDCAsyncCompleted(sender, eventArgs);
         }
 
@@ -1930,8 +1862,6 @@ namespace Intuit.Ipp.DataService
         /// <returns>Returns an uploaded attachment with updated identifier and sync token.</returns>
         public Attachable Upload(Attachable entity, System.IO.Stream stream)
         {
-            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Called Method Upload.");
-
             // Validate parameter
             if (!ServicesHelper.IsTypeNull(entity))
             {
@@ -2028,7 +1958,6 @@ namespace Intuit.Ipp.DataService
 
             // de serialize object
             IntuitResponse restResponse = (IntuitResponse)CoreHelper.GetSerializer(this.serviceContext, false).Deserialize<IntuitResponse>(response);
-            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Finished Executing Method Add.");
             foreach (AttachableResponse returnEntity in restResponse.AnyIntuitObjects)
             {
                 return returnEntity.AnyIntuitObject as Attachable;
@@ -2043,8 +1972,6 @@ namespace Intuit.Ipp.DataService
         /// <returns> Returns an entity of specified Id.</returns> 
         public byte[] Download(Attachable entity)
         {
-            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Called Method Download.");
-
             // Validate parameter
             if (!ServicesHelper.IsTypeNull(entity))
             {
