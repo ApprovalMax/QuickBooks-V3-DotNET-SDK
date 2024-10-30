@@ -262,17 +262,12 @@ namespace Intuit.Ipp.Core.Rest
         /// <returns>Returns the response.</returns>
         private string CallRestService(HttpWebRequest request)
         {
-            this.context.IppConfiguration.Logger.CustomLogger.Log(TraceLevel.Info, "Getting the response from service.");
             //if (ServicePointManager.SecurityProtocol != 0)
             //    ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12;
             // Call the service and get response.
             using (HttpWebResponse httpWebResponse = request.GetResponse() as HttpWebResponse)
             {
                 string parsedResponse = this.ParseResponse(httpWebResponse);
-                TraceSwitch traceSwitch = new TraceSwitch("IPPTraceSwitch", "IPP Trace Switch");
-                this.context.IppConfiguration.Logger.CustomLogger.Log(TraceLevel.Info, (int)traceSwitch.Level > (int)TraceLevel.Info ? "Got the response from service.\n Start dump: \n " + parsedResponse : "Got the response from service.");
-                CoreHelper.AdvancedLogging.Log("Got the response from service.\n Start dump: \n " + parsedResponse );
-
                 // Parse the response from the call and return.
                 return parsedResponse;
             }
@@ -285,8 +280,6 @@ namespace Intuit.Ipp.Core.Rest
         /// <returns>Returns the response.</returns>
         private byte[] GetRestServiceCallResponseStream(HttpWebRequest request)
         {
-            this.context.IppConfiguration.Logger.CustomLogger.Log(TraceLevel.Info, "Getting the response from service as response stream.");
-            CoreHelper.AdvancedLogging.Log("Getting the response from service as response stream.");
             Stream receiveStream = new MemoryStream();
             byte[] receiveBytes = new byte[0];
             MemoryStream mem = new MemoryStream();
@@ -315,10 +308,6 @@ namespace Intuit.Ipp.Core.Rest
                         receiveBytes = mem.ToArray();
                     }
                 }
-                
-                TraceSwitch traceSwitch = new TraceSwitch("IPPTraceSwitch", "IPP Trace Switch");
-                this.context.IppConfiguration.Logger.CustomLogger.Log(TraceLevel.Info, "Got the response from service.");
-                CoreHelper.AdvancedLogging.Log("Got the response from service.");
             }
 
             // Return the response stream
