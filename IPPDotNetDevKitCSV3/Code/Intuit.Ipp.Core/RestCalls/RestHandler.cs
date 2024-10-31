@@ -20,6 +20,7 @@
 ////********************************************************************
 
 using System.Diagnostics;
+using Intuit.Ipp.Core.RestCalls;
 
 namespace Intuit.Ipp.Core.Rest
 {
@@ -223,6 +224,7 @@ namespace Intuit.Ipp.Core.Rest
 
             // This indicates whether a sync call or an async call is to be made. For an async call
             // the GetRequestStream is an async call so do not call it here.
+            var requestContentString = string.Empty;
             if (this.IsSyncRequestStream)
             {
                 // When the Verb is POST, we need to serialize the request xml to body.
@@ -251,27 +253,12 @@ namespace Intuit.Ipp.Core.Rest
                                 requestXML.Append(this.RequestSerializer.Serialize(requestBody));
                             }
 
-
-                            //enabling header logging in Serilogger
-                            WebHeaderCollection allHeaders = httpWebRequest.Headers;
-
-                            CoreHelper.AdvancedLogging.Log(" RequestUrl: " + httpWebRequest.RequestUri);
-                            CoreHelper.AdvancedLogging.Log("Logging all headers in the request:");
-
-                            for (int i = 0; i < allHeaders.Count; i++)
-                            {
-                                CoreHelper.AdvancedLogging.Log(allHeaders.GetKey(i) + "-" + allHeaders[i]);
-                            }
-
-
-                            // Log Request Body to a file
-                            this.RequestLogging.LogPlatformRequests(" RequestUrl: " + requestEndpoint + ", Request Payload:" + requestXML.ToString(), true);
-                            //Log to Serilog
-                            CoreHelper.AdvancedLogging.Log( "Request Payload:" + requestXML.ToString());
+                            // For logging
+                            requestContentString = requestXML.ToString();
 
                             // Use of encoding to get bytes used to write to request stream.
                             UTF8Encoding encoding = new UTF8Encoding();
-                            content = encoding.GetBytes(requestXML.ToString());
+                            content = encoding.GetBytes(requestContentString);
                         }
                     }
                     else
@@ -307,6 +294,17 @@ namespace Intuit.Ipp.Core.Rest
 
             // Add the Request Source header value.
             httpWebRequest.UserAgent = CoreConstants.REQUESTSOURCEHEADER;
+
+            if (this.serviceContext.IppConfiguration.Logger.UseVerboseLogging)
+            {
+                this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(
+                    TraceLevel.Info,
+                    "Sending request to QBooks: {RealmId} {Method} {Uri} {Content}",
+                    this.serviceContext.RealmId,
+                    httpWebRequest.Method,
+                    httpWebRequest.RequestUri,
+                    requestContentString);
+            }
 
             // Return the created http web request.
             return httpWebRequest;
