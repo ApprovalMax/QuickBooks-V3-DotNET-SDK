@@ -84,7 +84,6 @@ namespace Intuit.Ipp.ReportService
         /// <param name="reportsQueryParameters">Report Parameters for query string</param>
         public void ExecuteReportAsync(string reportName, string reportsQueryParameters)
         {
-            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Called Method ExecuteReport Asynchronously.");
             AsyncRestHandler asyncRestHandler = new AsyncRestHandler(this.serviceContext);
             asyncRestHandler.OnCallCompleted += new EventHandler<AsyncCallCompletedEventArgs>(this.ExecuteReportAsynCompleted);
             ReportCallCompletedEventArgs<Report> reportCallCompletedEventArgs = new ReportCallCompletedEventArgs<Report>();
@@ -163,7 +162,6 @@ namespace Intuit.Ipp.ReportService
                     if (!response.StartsWith("{\"Report\":")) { response = "{\"Report\":" + response + "}"; }
                     IntuitResponse restResponse = (IntuitResponse)responseSerializer.Deserialize<IntuitResponse>(response);
                     reportCallCompletedEventArgs.Report = restResponse.AnyIntuitObject as Report;
-                    this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Finished Executing event Execute ReportAsynCompleted in AsyncService object.");
                     this.OnExecuteReportAsyncCompleted(this, reportCallCompletedEventArgs);
                 }
                 catch (SystemException systemException)
