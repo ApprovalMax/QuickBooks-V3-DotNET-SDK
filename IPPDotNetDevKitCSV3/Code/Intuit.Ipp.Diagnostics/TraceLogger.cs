@@ -51,7 +51,8 @@ namespace Intuit.Ipp.Diagnostics
         /// </summary>
         /// <param name="idsTraceLevel">IDS Trace Level.</param>
         /// <param name="messageToWrite">The message to write.</param>
-        public void Log(TraceLevel idsTraceLevel, string messageToWrite)
+        /// <param name="args">The arguments.</param>
+        public void Log(TraceLevel idsTraceLevel, string messageToWrite, params object?[] args)
         {
             if ((int)this.traceSwitch.Level < (int)idsTraceLevel)
             {
@@ -70,16 +71,16 @@ namespace Intuit.Ipp.Diagnostics
             switch (idsTraceLevel)
             {
                 case TraceLevel.Info:
-                    Trace.TraceInformation(logMessage.ToString());
+                    Trace.TraceInformation(logMessage.ToString(), args);
                     break;
                 case TraceLevel.Verbose:
                     Trace.WriteLine(logMessage.ToString());
                     break;
                 case TraceLevel.Warning:
-                    Trace.TraceWarning(logMessage.ToString());
+                    Trace.TraceWarning(logMessage.ToString(), args);
                     break;
                 case TraceLevel.Error:
-                    Trace.TraceError(logMessage.ToString());
+                    Trace.TraceError(logMessage.ToString(), args);
                     break;
                 case TraceLevel.Off:
                     break;
