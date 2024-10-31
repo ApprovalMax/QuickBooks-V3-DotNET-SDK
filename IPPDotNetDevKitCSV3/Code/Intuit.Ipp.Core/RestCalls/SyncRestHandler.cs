@@ -20,6 +20,8 @@
 ////********************************************************************
 
 using System.Diagnostics;
+using System.Text;
+using Intuit.Ipp.Core.RestCalls;
 
 namespace Intuit.Ipp.Core.Rest
 {
@@ -139,8 +141,6 @@ namespace Intuit.Ipp.Core.Rest
                             if (!response.StartsWith("{\"TaxService\":")) { response = "{\"TaxService\":" + response + "}"; }
                         }
                     }
-
-
                 }
             }
             catch (RetryExceededException retryExceededException)
@@ -269,6 +269,24 @@ namespace Intuit.Ipp.Core.Rest
             {
                 string parsedResponse = this.ParseResponse(httpWebResponse);
                 // Parse the response from the call and return.
+                if (this.context.IppConfiguration.Logger.UseVerboseLogging)
+                {
+                    var headersStringBuilder = new StringBuilder();
+                    foreach (string? header in httpWebResponse.Headers)
+                    {
+                        headersStringBuilder.Append($"{header}: {httpWebResponse.Headers[header]}");
+                    }
+                    var responseHeaders = httpWebResponse.Headers.ConvertHeaderToString();
+                    this.context.IppConfiguration.Logger.CustomLogger.Log(
+                        TraceLevel.Info,
+                        "QBooks response for {Method} {RequestUri}. RealmId: {RealmId} Headers: {Headers};  Body: {Content}.",
+                        request.Method,
+                        request.RequestUri,
+                        this.context.RealmId,
+                        responseHeaders,
+                        parsedResponse);
+                }
+                
                 return parsedResponse;
             }
         }
