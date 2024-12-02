@@ -19,8 +19,6 @@
 // <summary>This file contains logic for REST request handler.</summary>
 ////********************************************************************
 
-using System.Diagnostics;
-using System.Text;
 using Intuit.Ipp.Core.RestCalls;
 
 namespace Intuit.Ipp.Core.Rest
@@ -271,11 +269,6 @@ namespace Intuit.Ipp.Core.Rest
                 // Parse the response from the call and return.
                 if (this.context.IppConfiguration.Logger.UseVerboseLogging)
                 {
-                    var headersStringBuilder = new StringBuilder();
-                    foreach (string? header in httpWebResponse.Headers)
-                    {
-                        headersStringBuilder.Append($"{header}: {httpWebResponse.Headers[header]}");
-                    }
                     var responseHeaders = httpWebResponse.Headers.ConvertHeaderToString();
                     this.context.IppConfiguration.Logger.CustomLogger.Log(
                         TraceLevel.Info,
