@@ -20,6 +20,7 @@
 ////*********************************************************
 
 using System;
+using Intuit.Ipp.Core.RestCalls;
 
 namespace Intuit.Ipp.Core.Rest
 {
@@ -134,6 +135,20 @@ namespace Intuit.Ipp.Core.Rest
 
                     //Log errorstring to Serilog
                     CoreHelper.AdvancedLogging.Log(" Response Intuit_Tid header: " + response_intuit_tid_header + ", Response Payload: " + errorString);
+
+                    if (this.context.IppConfiguration.Logger.UseVerboseLogging)
+                    {
+                        var responseHeaders = errorResponse.Headers.ConvertHeaderToString();
+                        this.context.IppConfiguration.Logger.CustomLogger.Log(
+                            TraceLevel.Warning,
+                            "QBooks response for {Method} {RequestUri} with status code {ResponseStatusCode}. RealmId: {RealmId} Headers: {Headers};  Body: {Content}.",
+                            errorResponse.Method,
+                            errorResponse.ResponseUri,
+                            statusCode,
+                            this.context.RealmId,
+                            responseHeaders,
+                            errorString);
+                    }
 
                     if (isIps)
                     {
