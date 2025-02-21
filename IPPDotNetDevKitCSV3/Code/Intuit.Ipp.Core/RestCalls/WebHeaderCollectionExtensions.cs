@@ -19,9 +19,10 @@ public static class WebHeaderCollectionExtensions
         var headersStringBuilder = new StringBuilder();
         for (var i = 0; i < headers.Count; i++)
         {
-            var splitter = i < headers.Count - 1 ? ";" : string.Empty;
-            headersStringBuilder.Append(
-                $"{headers[i]}: {headers[headers[i]]}{splitter}");
+            var splitter = i < headers.Count - 1
+                ? ";"
+                : string.Empty;
+            headersStringBuilder.Append($"{headers[i]}: {headers[headers[i]]}{splitter}");
         }
 
         return headersStringBuilder.ToString();
