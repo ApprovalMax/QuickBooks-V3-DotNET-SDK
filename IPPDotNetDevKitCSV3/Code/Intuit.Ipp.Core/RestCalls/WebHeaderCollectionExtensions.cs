@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Net;
 using System.Text;
 
@@ -16,9 +17,12 @@ public static class WebHeaderCollectionExtensions
     public static string ConvertHeaderToString(this WebHeaderCollection headers)
     {
         var headersStringBuilder = new StringBuilder();
-        foreach (string header in headers)
+        for (var i = 0; i < headers.Count; i++)
         {
-            headersStringBuilder.Append($"{header}: {headers[header]}");
+            var splitter = i < headers.Count - 1
+                ? ";"
+                : string.Empty;
+            headersStringBuilder.Append($"{headers[i]}: {headers[headers[i]]}{splitter}");
         }
 
         return headersStringBuilder.ToString();
