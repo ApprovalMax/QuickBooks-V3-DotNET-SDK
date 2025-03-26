@@ -19,5 +19,3 @@ updates:
       all-nugets:
         patterns:
           - '*'
-    ignore:
-      - dependency-name: 'JetBrains.ReSharper.GlobalTools'
