@@ -73,6 +73,7 @@ namespace Intuit.Ipp.EntitlementService
         /// <returns>Returns EntitlementsResponse</returns>
         public EntitlementsResponse GetEntitlements(string entitlementBaseUrl = Utility.CoreConstants.ENTITLEMENT_BASEURL)
         {
+            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Called Method GetEntitlements.");
             string uri = string.Format(CultureInfo.InvariantCulture, "{0}/entitlements/{1}/{2}", entitlementBaseUrl, Utility.CoreConstants.VERSION, serviceContext.RealmId);
 
             orginialSerializationFormat = this.serviceContext.IppConfiguration.Message.Response.SerializationFormat;
@@ -100,6 +101,7 @@ namespace Intuit.Ipp.EntitlementService
 
             // de serialize object
             EntitlementsResponse restResponse = (EntitlementsResponse)CoreHelper.GetSerializer(this.serviceContext, false).Deserialize<EntitlementsResponse>(response);
+            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Finished Executing Method GetEntitlements.");
 
             // change Response Serialization Format back to Config value
             serviceContext.IppConfiguration.Message.Response.SerializationFormat = orginialSerializationFormat;
@@ -116,6 +118,8 @@ namespace Intuit.Ipp.EntitlementService
         /// <returns>Returns EntitlementsResponse</returns>
         public void GetEntitlementsAsync(string entitlementBaseUrl = Utility.CoreConstants.ENTITLEMENT_BASEURL)
         {
+            Console.Write("GetEntitlementsAsync started \n");
+            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Called Method GetEntitlements Asynchronously.");
             AsyncRestHandler asyncRestHandler = new AsyncRestHandler(this.serviceContext);
             asyncRestHandler.OnCallCompleted += new EventHandler<AsyncCallCompletedEventArgs>(this.GetEntitlementsAsyncCompleted);
 
@@ -168,6 +172,7 @@ namespace Intuit.Ipp.EntitlementService
                     IEntitySerializer responseSerializer = CoreHelper.GetSerializer(this.serviceContext, false);
                     EntitlementsResponse restResponse = (EntitlementsResponse)responseSerializer.Deserialize<EntitlementsResponse>(eventArgs.Result);
                     entitlementCallCompletedEventArgs.EntitlementsResponse = restResponse;
+                    this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Finished Executing event GetEntitlementsAsync in AyncService object.");
 
                     // change Response Serialization Format back to Config value
                     serviceContext.IppConfiguration.Message.Response.SerializationFormat = orginialSerializationFormat;

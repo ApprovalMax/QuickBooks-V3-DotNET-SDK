@@ -233,6 +233,9 @@ namespace Intuit.Ipp.Core.Rest
                                byte[] content = encoding.GetBytes(this.requestBody);
 
                                TraceSwitch traceSwitch = new TraceSwitch("IPPTraceSwitch", "IPP Trace Switch");
+                               this.context.IppConfiguration.Logger.CustomLogger.Log(TraceLevel.Info, (int)traceSwitch.Level > (int)TraceLevel.Info ? "Adding the payload to request. \n Start dump: " + this.requestBody : "Adding the payload to request.");
+
+                               
                                // Check whether compression is enabled and compress the stream accordingly.
                                if (this.RequestCompressor != null)
                                {
@@ -450,6 +453,11 @@ namespace Intuit.Ipp.Core.Rest
             // Log response to Serilog
             CoreHelper.AdvancedLogging.Log(" Response Intuit_Tid header: " + response_intuit_tid_header + ", Response Payload: " + resultString);
 
+            //log response to logs
+            TraceSwitch traceSwitch = new TraceSwitch("IPPTraceSwitch", "IPP Trace Switch");
+            this.context.IppConfiguration.Logger.CustomLogger.Log(TraceLevel.Info, (int)traceSwitch.Level > (int)TraceLevel.Info ? "Got the response from service.\n Start Dump: \n" + resultString : "Got the response from service.");
+
+
             CoreHelper.AdvancedLogging.Log("Got the response from service.\n Start Dump: \n" + resultString);
             //if response is of not type pdf do as usual
             if (!isResponsePdf)
@@ -576,6 +584,10 @@ namespace Intuit.Ipp.Core.Rest
             UTF8Encoding encoding = new UTF8Encoding();
             byte[] content = encoding.GetBytes(this.requestBody);
 
+
+            TraceSwitch traceSwitch = new TraceSwitch("IPPTraceSwitch", "IPP Trace Switch");
+            this.context.IppConfiguration.Logger.CustomLogger.Log(TraceLevel.Info, (int)traceSwitch.Level > (int)TraceLevel.Info ? "Adding the payload to request.\n Start dump of request: \n" + this.requestBody : "Adding the payload to request.");
+            CoreHelper.AdvancedLogging.Log("Adding the payload to request.\n Start dump of request: \n" + this.requestBody);
             // Check whether compression is enabled and compress the stream accordingly.
             if (this.RequestCompressor != null)
             {

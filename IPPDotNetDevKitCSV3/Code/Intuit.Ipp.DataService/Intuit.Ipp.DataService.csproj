@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFrameworks>netstandard2.0;net472;net461</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>
@@ -9,8 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" />
-    <PackageReference Include="System.Configuration.ConfigurationManager"/>
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.6.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -20,6 +19,10 @@
     <ProjectReference Include="..\Intuit.Ipp.Exception\Intuit.Ipp.Exception.csproj" />
     <ProjectReference Include="..\Intuit.Ipp.Security\Intuit.Ipp.Security.csproj" />
     <ProjectReference Include="..\Intuit.Ipp.Utility\Intuit.Ipp.Utility.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="Newtonsoft.Json" Version="13.0.2" />
   </ItemGroup>
 
 </Project>

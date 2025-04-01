@@ -1,13 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFrameworks>netstandard2.0;net472;net461</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="app.config" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="System.Configuration.ConfigurationManager" />
-    <PackageReference Include="Newtonsoft.Json" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.6.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Tools\XsdExtension\Intuit.Ipp.Data\Intuit.Ipp.Data.csproj" />
@@ -21,5 +20,8 @@
     <None Update="AppSettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Update="Newtonsoft.Json" Version="13.0.2" />
   </ItemGroup>
 </Project>

@@ -31,7 +31,6 @@ namespace Intuit.Ipp.Diagnostics
         /// </summary>
         /// <param name="idsTraceLevel">IDS Trace Level.</param>
         /// <param name="messageToWrite">The message to write.</param>
-        /// <param name="args">The arguments.</param>
-        void Log(TraceLevel idsTraceLevel, string messageToWrite, params object?[] args);
+        void Log(TraceLevel idsTraceLevel, string messageToWrite);
     }
 }

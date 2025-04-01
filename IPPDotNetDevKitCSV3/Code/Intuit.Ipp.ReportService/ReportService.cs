@@ -86,6 +86,9 @@ namespace Intuit.Ipp.ReportService
         /// <returns>Returns an updated version of the entity with updated identifier and sync token.</returns>
         public Report ExecuteReport(string reportName)
         {
+           
+            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Called Method ExecuteReport.");
+
             // Validate parameter
             if (string.IsNullOrEmpty(reportName))
             {
@@ -139,6 +142,7 @@ namespace Intuit.Ipp.ReportService
 
             // de serialize object
             IntuitResponse restResponse = (IntuitResponse)CoreHelper.GetSerializer(this.serviceContext, false).Deserialize<IntuitResponse>(response);
+            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Finished Executing Method ExecuteReport.");
             return (Report)(restResponse.AnyIntuitObject as Report);
         }
 
@@ -154,7 +158,10 @@ namespace Intuit.Ipp.ReportService
         /// <param name="reportName">Name of Report to Run.</param>
         public void ExecuteReportAsync(string reportName)
         {
+            Console.Write("ExecuteReport started \n");
+            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Called Method ExecuteReport Asynchronously.");
             ReportCallCompletedEventArgs<Report> reportCallCompletedEventArgs = new ReportCallCompletedEventArgs<Report>();
+            Console.Write("callCompletedEventArgs instantiated \n");
             if (string.IsNullOrEmpty(reportName))
             {
                 IdsException exception = new IdsException(Resources.ParameterNotNullMessage, new ArgumentNullException(Resources.StringParameterNullOrEmpty));
@@ -317,6 +324,7 @@ namespace Intuit.Ipp.ReportService
         /// <param name="eventArgs">callback event arguments</param>
         private void ExecuteReportAsyncCompleted(object sender, ReportCallCompletedEventArgs<Report> eventArgs)
         {
+            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Finished Executing Method ExecuteReport Async.");
             this.OnExecuteReportAsyncCompleted(sender, eventArgs);
         }
         

@@ -29,11 +29,6 @@ namespace Intuit.Ipp.Core.Configuration
     public class Logger
     {
         /// <summary>
-        /// Enable request and response logging.
-        /// </summary>
-        public bool UseVerboseLogging { get; set; }
-
-        /// <summary>
         /// Gets or sets the Request logging mechanism.
         /// </summary>
         public RequestLog RequestLog { get; set; }

@@ -388,6 +388,7 @@ namespace Intuit.Ipp.Core
         /// <returns>Returns the base Uri endpoint for a user.</returns>
         private string GetBaseURL()
         {
+            this.IppConfiguration.Logger.CustomLogger.Log(TraceLevel.Info, "Called GetBaseURL method.");
             string baseurl = string.Empty;
 
 
@@ -406,6 +407,9 @@ namespace Intuit.Ipp.Core
                         baseurl = baseurl + "/";
                     }
                 }
+
+
+                this.IppConfiguration.Logger.CustomLogger.Log(TraceLevel.Info, string.Format(CultureInfo.InvariantCulture, "BaseUrl set for QBO Service Type: {0}.", baseurl));
             }
             else if (this.serviceType == IntuitServicesType.IPS)
             {
@@ -414,6 +418,8 @@ namespace Intuit.Ipp.Core
                 {
                     baseurl = Utility.CoreConstants.IPS_BASEURL;
                 }
+
+                this.IppConfiguration.Logger.CustomLogger.Log(TraceLevel.Info, string.Format(CultureInfo.InvariantCulture, "BaseUrl set for Intuit Platform Service Type: {0}.", baseurl));
             }
 
             return baseurl;
@@ -425,9 +431,12 @@ namespace Intuit.Ipp.Core
         /// <returns>Returns the minorVersion</returns>
         private string GetMinorVersion()
         {
+            this.IppConfiguration.Logger.CustomLogger.Log(TraceLevel.Info, "Called GetMinorVersion method.");
             string minorversion = null;
 
             minorversion = this.IppConfiguration.MinorVersion.Qbo;
+            this.IppConfiguration.Logger.CustomLogger.Log(TraceLevel.Info, string.Format(CultureInfo.InvariantCulture, "MinorVersion set for QBO Service Type: {0}.", minorversion));
+
 
             return minorversion;
         }

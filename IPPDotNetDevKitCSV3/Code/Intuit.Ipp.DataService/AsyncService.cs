@@ -152,6 +152,7 @@ namespace Intuit.Ipp.DataService
         /// <param name="maxResults">The max results.</param>
         public void FindAllAsync<T>(T entity, int startPosition, int maxResults) where T : IEntity
         {
+            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Called Method FindAll Asynchronously.");
             AsyncRestHandler asyncRestHandler = new AsyncRestHandler(this.serviceContext);
             asyncRestHandler.OnCallCompleted += new EventHandler<AsyncCallCompletedEventArgs>(this.FindAllAsyncCompleted<IEntity>);
             FindAllCallCompletedEventArgs findAllCompletedEventArgs = new FindAllCallCompletedEventArgs();
@@ -194,6 +195,7 @@ namespace Intuit.Ipp.DataService
         /// <typeparam name="T"></typeparam>
         public void FindAllAsync<T>(T entity) where T : IEntity
         {
+            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Called Method FindAllAsync");
             AsyncRestHandler asyncRestHandler = new AsyncRestHandler(this.serviceContext);
             asyncRestHandler.OnCallCompleted += new EventHandler<AsyncCallCompletedEventArgs>(this.FindAllAsyncCompleted<IEntity>);
             FindAllCallCompletedEventArgs findAllCompletedEventArgs = new FindAllCallCompletedEventArgs();
@@ -228,6 +230,7 @@ namespace Intuit.Ipp.DataService
         /// <param name="entity">Entity to Add</param>
         public void AddAsync<T>(T entity) where T : IEntity
         {
+            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Called Method Add Asynchronously.");
             AsyncRestHandler asyncRestHandler = new AsyncRestHandler(this.serviceContext);
             asyncRestHandler.OnCallCompleted += new EventHandler<AsyncCallCompletedEventArgs>(this.AddAsyncompleted);
             CallCompletedEventArgs<IEntity> callCompletedEventArgs = new CallCompletedEventArgs<IEntity>();
@@ -279,6 +282,7 @@ namespace Intuit.Ipp.DataService
         /// <param name="entity">Entity to Update</param>
         public void UpdateAsync<T>(T entity) where T : IEntity
         {
+            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Called Method Update Asynchronously.");
             AsyncRestHandler asyncRestHandler = new AsyncRestHandler(this.serviceContext);
             asyncRestHandler.OnCallCompleted += new EventHandler<AsyncCallCompletedEventArgs>(this.UpdateAsyncCompleted);
             CallCompletedEventArgs<IEntity> callCompletedEventArgs = new CallCompletedEventArgs<IEntity>();
@@ -330,6 +334,7 @@ namespace Intuit.Ipp.DataService
         /// <param name="entity">Entity to Update</param>
         public void UpdateAccAsync<T>(T entity) where T : IEntity
         {
+            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Called Method Update account Asynchronously.");
             AsyncRestHandler asyncRestHandler = new AsyncRestHandler(this.serviceContext);
             asyncRestHandler.OnCallCompleted += new EventHandler<AsyncCallCompletedEventArgs>(this.UpdateAccAsyncCompleted);
             CallCompletedEventArgs<IEntity> callCompletedEventArgs = new CallCompletedEventArgs<IEntity>();
@@ -378,6 +383,7 @@ namespace Intuit.Ipp.DataService
         /// <param name="entity">Entity to Update</param>
         public void DoNotUpdateAccAsync<T>(T entity) where T : IEntity
         {
+            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Called Method Update account Asynchronously.");
             AsyncRestHandler asyncRestHandler = new AsyncRestHandler(this.serviceContext);
             asyncRestHandler.OnCallCompleted += new EventHandler<AsyncCallCompletedEventArgs>(this.DoNotUpdateAccAsyncCompleted);
             CallCompletedEventArgs<IEntity> callCompletedEventArgs = new CallCompletedEventArgs<IEntity>();
@@ -427,6 +433,7 @@ namespace Intuit.Ipp.DataService
         /// <param name="entity">Entity to Delete</param>
         public void DeleteAsync<T>(T entity) where T : IEntity
         {
+            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Called Method delete Asynchronously.");
             AsyncRestHandler asyncRestHandler = new AsyncRestHandler(this.serviceContext);
             asyncRestHandler.OnCallCompleted += new EventHandler<AsyncCallCompletedEventArgs>(this.DeleteAsyncCompleted);
             CallCompletedEventArgs<IEntity> callCompletedEventArgs = new CallCompletedEventArgs<IEntity>();
@@ -477,6 +484,7 @@ namespace Intuit.Ipp.DataService
         /// <param name="entity">Entity to Delete</param>
         public void VoidAsync<T>(T entity) where T : IEntity
         {
+            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Called Method Void Asynchronously.");
             AsyncRestHandler asyncRestHandler = new AsyncRestHandler(this.serviceContext);
             asyncRestHandler.OnCallCompleted += new EventHandler<AsyncCallCompletedEventArgs>(this.VoidAsyncCompleted);
             CallCompletedEventArgs<IEntity> callCompletedEventArgs = new CallCompletedEventArgs<IEntity>();
@@ -524,6 +532,7 @@ namespace Intuit.Ipp.DataService
         /// <param name="entity"> Entity type to get as pdf</param>    
         public void GetPdfAsync<T>(T entity) where T : IEntity
         {
+            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Called Method GetPdf Asynchronously.");
             AsyncRestHandler asyncRestHandler = new AsyncRestHandler(this.serviceContext);
             asyncRestHandler.OnCallCompleted += new EventHandler<AsyncCallCompletedEventArgs>(this.GetPdfCompleted);
             CallCompletedEventArgs<IEntity> callCompletedEventArgs = new CallCompletedEventArgs<IEntity>();
@@ -612,6 +621,7 @@ namespace Intuit.Ipp.DataService
                     pdfCallCompletedEventArgs.PdfBytes = eventArgs.ByteResult;
 
 
+                    this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Finished Executing event GetPdfCompleted in AsyncService object.");
                     this.OnGetPdfAsynCompleted(this, pdfCallCompletedEventArgs);
                 }
                 catch (SystemException systemException)
@@ -639,6 +649,7 @@ namespace Intuit.Ipp.DataService
         /// <param name="sendToEmail">Email address to send email to.</param>    
         public void SendEmailAsync<T>(T entity, String sendToEmail) where T : IEntity
         {
+            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Called Method Add Asynchronously.");
             AsyncRestHandler asyncRestHandler = new AsyncRestHandler(this.serviceContext);
             asyncRestHandler.OnCallCompleted += new EventHandler<AsyncCallCompletedEventArgs>(this.SendEmailCompleted);
             CallCompletedEventArgs<IEntity> callCompletedEventArgs = new CallCompletedEventArgs<IEntity>();
@@ -705,6 +716,7 @@ namespace Intuit.Ipp.DataService
                         callCompletedEventArgs.Entity = response;
                     }
 
+                    this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Finished Executing event SednEmailCompleted in AsyncService object.");
                     this.OnSendEmailAsynCompleted(this, callCompletedEventArgs);
                 }
                 catch (SystemException systemException)
@@ -731,6 +743,7 @@ namespace Intuit.Ipp.DataService
         /// <param name="entity"> Entity type to Find</param>    
         public void FindByIdAsync<T>(T entity) where T : IEntity
         {
+            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Called Method Add Asynchronously.");
             AsyncRestHandler asyncRestHandler = new AsyncRestHandler(this.serviceContext);
             asyncRestHandler.OnCallCompleted += new EventHandler<AsyncCallCompletedEventArgs>(this.FindByIdCompleted);
             CallCompletedEventArgs<IEntity> callCompletedEventArgs = new CallCompletedEventArgs<IEntity>();
@@ -834,6 +847,7 @@ namespace Intuit.Ipp.DataService
                         }
                     }
 
+                    this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Finished Executing event FindByIdCompleted in AsyncService object.");
                     this.OnFindByIdAsynCompleted(this, callCompletedEventArgs);
                 }
                 catch (SystemException systemException)
@@ -858,6 +872,7 @@ namespace Intuit.Ipp.DataService
         /// <param name="entity"></param>
         public void FindByLevelAsync<T>(T entity) where T : IEntity
         {
+            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Called Method FindByLevelAsync.");
             AsyncRestHandler asyncRestHandler = new AsyncRestHandler(this.serviceContext);
             asyncRestHandler.OnCallCompleted += new EventHandler<AsyncCallCompletedEventArgs>(this.FindByLevelAsyncCompleted<T>);
             FindAllCallCompletedEventArgs findAllCompletedEventArgs = new FindAllCallCompletedEventArgs();
@@ -953,6 +968,7 @@ namespace Intuit.Ipp.DataService
                     }
 
                     findAllCallCompletedEventArgs.Entities = entities;
+                    this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Finished Executing event FindByLevelAsyncCompleted in AsyncService object.");
                     this.OnFindByLevelAsyncCompleted(this, findAllCallCompletedEventArgs);
                 }
                 catch (SystemException systemException)
@@ -972,6 +988,7 @@ namespace Intuit.Ipp.DataService
         /// <param name="entity"></param>
         public void FindByParentIdAsync<T>(T entity) where T : IEntity
         {
+            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Called Method FindByParentIdAsync.");
             AsyncRestHandler asyncRestHandler = new AsyncRestHandler(this.serviceContext);
             asyncRestHandler.OnCallCompleted += new EventHandler<AsyncCallCompletedEventArgs>(this.FindByParentIdAsyncCompleted<T>);
             FindAllCallCompletedEventArgs findAllCompletedEventArgs = new FindAllCallCompletedEventArgs();
@@ -1067,6 +1084,7 @@ namespace Intuit.Ipp.DataService
                     }
 
                     findAllCallCompletedEventArgs.Entities = entities;
+                    this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Finished Executing event FindByParentIdAsynccompleted in AsyncService object.");
                     this.OnFindByParentIdAsyncCompleted(this, findAllCallCompletedEventArgs);
                 }
                 catch (SystemException systemException)
@@ -1088,6 +1106,7 @@ namespace Intuit.Ipp.DataService
         /// </summary>
         public void CDCAsync(List<IEntity> entityList, DateTime changedSince)
         {
+            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Called Method CDC Asynchronously.");
             AsyncRestHandler asyncRestHandler = new AsyncRestHandler(this.serviceContext);
             asyncRestHandler.OnCallCompleted += new EventHandler<AsyncCallCompletedEventArgs>(this.CDCAsyncCompleted);
             CDCCallCompletedEventArgs cdcCompletedEventArgs = new CDCCallCompletedEventArgs();
@@ -1212,6 +1231,7 @@ namespace Intuit.Ipp.DataService
                     }
 
                     findAllCallCompletedEventArgs.Entities = entities;
+                    this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Finished Executing event AddAsyncompleted in AsyncService object.");
                     this.OnFindAllAsynCompleted(this, findAllCallCompletedEventArgs);
                 }
                 catch (SystemException systemException)
@@ -1244,6 +1264,7 @@ namespace Intuit.Ipp.DataService
                     IEntitySerializer responseSerializer = CoreHelper.GetSerializer(this.serviceContext, false);
                     IntuitResponse restResponse = (IntuitResponse)responseSerializer.Deserialize<IntuitResponse>(eventArgs.Result);
                     callCompletedEventArgs.Entity = restResponse.AnyIntuitObject as IEntity;
+                    this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Finished Executing event AddAsyncompleted in AsyncService object.");
                     this.OnAddAsyncCompleted(this, callCompletedEventArgs);
                 }
                 catch (SystemException systemException)
@@ -1276,6 +1297,7 @@ namespace Intuit.Ipp.DataService
                     IEntitySerializer responseSerializer = CoreHelper.GetSerializer(this.serviceContext, false);
                     IntuitResponse restResponse = (IntuitResponse)responseSerializer.Deserialize<IntuitResponse>(eventArgs.Result);
                     callCompletedEventArgs.Entity = restResponse.AnyIntuitObject as IEntity;
+                    this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Finished Executing event AddAsyncompleted in AsyncService object.");
                     this.OnUpdateAsynCompleted(this, callCompletedEventArgs);
                 }
                 catch (SystemException systemException)
@@ -1309,6 +1331,7 @@ namespace Intuit.Ipp.DataService
                     IEntitySerializer responseSerializer = CoreHelper.GetSerializer(this.serviceContext, false);
                     IntuitResponse restResponse = (IntuitResponse)responseSerializer.Deserialize<IntuitResponse>(eventArgs.Result);
                     callCompletedEventArgs.Entity = restResponse.AnyIntuitObject as IEntity;
+                    this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Finished Executing event AddAsyncompleted in AsyncService object.");
                     this.OnUpdateAccAsynCompleted(this, callCompletedEventArgs);
                 }
                 catch (SystemException systemException)
@@ -1336,6 +1359,7 @@ namespace Intuit.Ipp.DataService
                     IEntitySerializer responseSerializer = CoreHelper.GetSerializer(this.serviceContext, false);
                     IntuitResponse restResponse = (IntuitResponse)responseSerializer.Deserialize<IntuitResponse>(eventArgs.Result);
                     callCompletedEventArgs.Entity = restResponse.AnyIntuitObject as IEntity;
+                    this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Finished Executing event AddAsyncompleted in AsyncService object.");
                     this.OnDoNotUpdateAccAsyncCompleted(this, callCompletedEventArgs);
                 }
                 catch (SystemException systemException)
@@ -1388,6 +1412,7 @@ namespace Intuit.Ipp.DataService
                     }
 
                     callCompletedEventArgs.Entity = this.requestedEntity;
+                    this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Finished Executing event DeleteAsyncCompleted in AsyncService object.");
                     this.OnDeleteAsynCompleted(this, callCompletedEventArgs);
                 }
                 catch (SystemException systemException)
@@ -1442,6 +1467,7 @@ namespace Intuit.Ipp.DataService
                     }
 
                     callCompletedEventArgs.Entity = restResponse.AnyIntuitObject as IEntity;
+                    this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Finished Executing event VoidAsyncCompleted in AsyncService object.");
                     this.OnVoidAsynCompleted(this, callCompletedEventArgs);
                 }
                 catch (SystemException systemException)
@@ -1520,6 +1546,7 @@ namespace Intuit.Ipp.DataService
                     }
 
                     cdcCallCompletedEventArgs.Entities = returnValue;
+                    this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Finished Executing event AddAsyncompleted in AsyncService object.");
                     this.OnCDCAsynCompleted(this, cdcCallCompletedEventArgs);
                 }
                 catch (SystemException systemException)

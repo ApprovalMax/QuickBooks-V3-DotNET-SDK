@@ -180,7 +180,13 @@ namespace Intuit.Ipp.QueryFilter
 
             int totalCount = queryResponse.totalCount;
 
+
+
+
+            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Finished Executing Method ExecuteIdsQuery.");
+
             return totalCount;
+
         }
 
         /// <summary>
@@ -286,6 +292,7 @@ namespace Intuit.Ipp.QueryFilter
                  }
              }*/
 
+            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Finished Executing Method ExecuteIdsQuery.");
             System.Collections.ObjectModel.ReadOnlyCollection<T> readOnlyCollection = new System.Collections.ObjectModel.ReadOnlyCollection<T>(entities);
             return readOnlyCollection;
         }
@@ -409,6 +416,7 @@ namespace Intuit.Ipp.QueryFilter
                 returnValues.Add(entities.AsReadOnly());
             }
 
+            this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Finished Executing Method FindAll.");
             return returnValues.AsReadOnly();
         }
 

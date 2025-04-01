@@ -19,7 +19,7 @@
 // <summary>This file contains logic for REST request handler.</summary>
 ////********************************************************************
 
-using Intuit.Ipp.Core.RestCalls;
+using System.Diagnostics;
 
 namespace Intuit.Ipp.Core.Rest
 {
@@ -139,6 +139,8 @@ namespace Intuit.Ipp.Core.Rest
                             if (!response.StartsWith("{\"TaxService\":")) { response = "{\"TaxService\":" + response + "}"; }
                         }
                     }
+
+
                 }
             }
             catch (RetryExceededException retryExceededException)
@@ -260,26 +262,18 @@ namespace Intuit.Ipp.Core.Rest
         /// <returns>Returns the response.</returns>
         private string CallRestService(HttpWebRequest request)
         {
+            this.context.IppConfiguration.Logger.CustomLogger.Log(TraceLevel.Info, "Getting the response from service.");
             //if (ServicePointManager.SecurityProtocol != 0)
             //    ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12;
             // Call the service and get response.
             using (HttpWebResponse httpWebResponse = request.GetResponse() as HttpWebResponse)
             {
                 string parsedResponse = this.ParseResponse(httpWebResponse);
+                TraceSwitch traceSwitch = new TraceSwitch("IPPTraceSwitch", "IPP Trace Switch");
+                this.context.IppConfiguration.Logger.CustomLogger.Log(TraceLevel.Info, (int)traceSwitch.Level > (int)TraceLevel.Info ? "Got the response from service.\n Start dump: \n " + parsedResponse : "Got the response from service.");
+                CoreHelper.AdvancedLogging.Log("Got the response from service.\n Start dump: \n " + parsedResponse );
+
                 // Parse the response from the call and return.
-                if (this.context.IppConfiguration.Logger.UseVerboseLogging)
-                {
-                    var responseHeaders = httpWebResponse.Headers.ConvertHeaderToString();
-                    this.context.IppConfiguration.Logger.CustomLogger.Log(
-                        TraceLevel.Info,
-                        "QBooks response for {Method} {RequestUri}. RealmId: {RealmId} Headers: {Headers};  Body: {Content}.",
-                        request.Method,
-                        request.RequestUri,
-                        this.context.RealmId,
-                        responseHeaders,
-                        parsedResponse);
-                }
-                
                 return parsedResponse;
             }
         }
@@ -291,6 +285,8 @@ namespace Intuit.Ipp.Core.Rest
         /// <returns>Returns the response.</returns>
         private byte[] GetRestServiceCallResponseStream(HttpWebRequest request)
         {
+            this.context.IppConfiguration.Logger.CustomLogger.Log(TraceLevel.Info, "Getting the response from service as response stream.");
+            CoreHelper.AdvancedLogging.Log("Getting the response from service as response stream.");
             Stream receiveStream = new MemoryStream();
             byte[] receiveBytes = new byte[0];
             MemoryStream mem = new MemoryStream();
@@ -319,6 +315,10 @@ namespace Intuit.Ipp.Core.Rest
                         receiveBytes = mem.ToArray();
                     }
                 }
+                
+                TraceSwitch traceSwitch = new TraceSwitch("IPPTraceSwitch", "IPP Trace Switch");
+                this.context.IppConfiguration.Logger.CustomLogger.Log(TraceLevel.Info, "Got the response from service.");
+                CoreHelper.AdvancedLogging.Log("Got the response from service.");
             }
 
             // Return the response stream
