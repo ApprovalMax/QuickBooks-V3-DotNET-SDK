@@ -40,6 +40,13 @@ namespace Intuit.Ipp.Core.Rest
     public class FaultHandler
     {
         /// <summary>
+        /// The name of the intuit_tid response header, also used as the key under which it is exposed
+        /// on <see cref="System.Exception.Data"/> so callers can surface Intuit's transaction id when
+        /// reporting failures to Intuit support.
+        /// </summary>
+        public const string IntuitTidExceptionDataKey = "intuit_tid";
+
+        /// <summary>
         /// The Service Context.
         /// </summary>
         private ServiceContext context;
@@ -207,11 +214,26 @@ namespace Intuit.Ipp.Core.Rest
                             idsException = new IdsException(statusCodeDescription, statusCode.ToString(CultureInfo.InvariantCulture), webException.Source);
                             break;
                     }
+
+                    AttachIntuitTid(idsException, response_intuit_tid_header);
                 }
             }
 
             // Return the Ids Exception.
             return idsException;
+        }
+
+        /// <summary>
+        /// Attaches the given intuit_tid value to the exception's <see cref="System.Exception.Data"/>.
+        /// </summary>
+        /// <param name="exception">The exception to enrich.</param>
+        /// <param name="intuitTid">The intuit_tid value.</param>
+        internal static void AttachIntuitTid(IdsException exception, string intuitTid)
+        {
+            if (exception != null && !string.IsNullOrEmpty(intuitTid))
+            {
+                exception.Data[IntuitTidExceptionDataKey] = intuitTid;
+            }
         }
 
         /// <summary>
@@ -237,6 +259,23 @@ namespace Intuit.Ipp.Core.Rest
             idsException = this.IterateFaultAndPrepareException(fault);
 
             // return the exception.
+            return idsException;
+        }
+
+        /// <summary>
+        /// Parses the error response and prepares the exception, attaching the given intuit_tid.
+        /// Used for fault responses returned as HTTP 200 OK with a Fault body (e.g. error 6041),
+        /// where the intuit_tid header is read by the caller from the HttpWebResponse.
+        /// </summary>
+        /// <param name="errorString">The error string.</param>
+        /// <param name="intuitTid">The intuit_tid response header value.</param>
+        /// <returns>Ids Exception.</returns>
+        public IdsException ParseErrorResponseAndPrepareException(string errorString, string intuitTid)
+        {
+            IdsException idsException = this.ParseErrorResponseAndPrepareException(errorString);
+
+            AttachIntuitTid(idsException, intuitTid);
+
             return idsException;
         }
 

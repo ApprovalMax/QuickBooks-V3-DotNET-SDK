@@ -103,20 +103,22 @@ namespace Intuit.Ipp.Core.Rest
 
             // Create a variable for storing the response.
             string response = string.Empty;
+            // intuit_tid of the response, captured so it can be attached to a fault exception below.
+            string responseIntuitTid = null;
             try
             {
                 // Check whether the retryPolicy is null.
                 if (this.context.IppConfiguration.RetryPolicy == null)
                 {
                     // If yes then call the rest service without retry framework enabled.
-                    response = this.CallRestService(request);
+                    response = this.CallRestService(request, out responseIntuitTid);
                 }
                 else
                 {
                     // If no then call the rest service using the execute action of retry framework.
                     this.context.IppConfiguration.RetryPolicy.ExecuteAction(() =>
                     {
-                        response = this.CallRestService(request);
+                        response = this.CallRestService(request, out responseIntuitTid);
                     });
                 }
                 if (request != null && request.RequestUri != null && request.RequestUri.Segments != null)
@@ -189,7 +191,7 @@ namespace Intuit.Ipp.Core.Rest
             else
             {
                 // Check the response if there are any fault tags and throw appropriate exceptions.
-                IdsException exception = handler.ParseErrorResponseAndPrepareException(response);
+                IdsException exception = handler.ParseErrorResponseAndPrepareException(response, responseIntuitTid);
                 if (exception != null)
                 {
                     throw exception;
@@ -257,14 +259,16 @@ namespace Intuit.Ipp.Core.Rest
         /// Calls the rest service.
         /// </summary>
         /// <param name="request">The request.</param>
+        /// <param name="intuitTid">Outputs the intuit_tid response header, or null when not present.</param>
         /// <returns>Returns the response.</returns>
-        private string CallRestService(HttpWebRequest request)
+        private string CallRestService(HttpWebRequest request, out string intuitTid)
         {
             //if (ServicePointManager.SecurityProtocol != 0)
             //    ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12;
             // Call the service and get response.
             using (HttpWebResponse httpWebResponse = request.GetResponse() as HttpWebResponse)
             {
+                intuitTid = ReadIntuitTid(httpWebResponse);
                 string parsedResponse = this.ParseResponse(httpWebResponse);
                 // Parse the response from the call and return.
                 if (this.context.IppConfiguration.Logger.UseVerboseLogging)
@@ -272,16 +276,28 @@ namespace Intuit.Ipp.Core.Rest
                     var responseHeaders = httpWebResponse.Headers.ConvertHeaderToString();
                     this.context.IppConfiguration.Logger.CustomLogger.Log(
                         TraceLevel.Info,
-                        "QBooks response for {Method} {RequestUri}. RealmId: {RealmId} Headers: {Headers};  Body: {Content}.",
+                        "QBooks response for {Method} {RequestUri}. RealmId: {RealmId} StatusCode: {StatusCode}; Intuit_Tid: {IntuitTid}; Headers: {Headers};  Body: {Content}.",
                         request.Method,
                         request.RequestUri,
                         this.context.RealmId,
+                        (int)httpWebResponse.StatusCode,
+                        intuitTid,
                         responseHeaders,
                         parsedResponse);
                 }
-                
+
                 return parsedResponse;
             }
+        }
+
+        /// <summary>
+        /// Reads the intuit_tid header value from the given response, or null if not present.
+        /// </summary>
+        /// <param name="response">The response.</param>
+        /// <returns>The intuit_tid header value, or null.</returns>
+        private static string ReadIntuitTid(HttpWebResponse response)
+        {
+            return response?.Headers?[FaultHandler.IntuitTidExceptionDataKey];
         }
 
         // <summary>
