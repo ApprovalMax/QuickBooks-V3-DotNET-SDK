@@ -22,7 +22,10 @@ public static class WebHeaderCollectionExtensions
             var splitter = i < headers.Count - 1
                 ? ";"
                 : string.Empty;
-            headersStringBuilder.Append($"{headers[i]}: {headers[headers[i]]}{splitter}");
+
+            // headers.GetKey(i) is the header name; headers.Get(i) is its value.
+            // The indexer headers[i] returns the value, not the name, so it must not be used as the key.
+            headersStringBuilder.Append($"{headers.GetKey(i)}: {headers.Get(i)}{splitter}");
         }
 
         return headersStringBuilder.ToString();
