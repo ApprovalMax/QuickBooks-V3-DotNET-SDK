@@ -386,15 +386,7 @@ namespace Intuit.Ipp.Core.Rest
                 }
 
                 // Log the response to Disk.
-                string response_intuit_tid_header = "";
-                //get intuit_tid header
-                for (int i = 0; i < httpWebResponse.Headers.Count; ++i)
-                {
-                    if (httpWebResponse.Headers.Keys[i] == "intuit_tid")
-                    {
-                        response_intuit_tid_header = httpWebResponse.Headers[i];
-                    }
-                }
+                string response_intuit_tid_header = ReadIntuitTid(httpWebResponse) ?? "";
                 this.RequestLogging.LogPlatformRequests(" Response Intuit_Tid header: " + response_intuit_tid_header + ", Response Payload: " + response, false);
                 //Log to Serilog
                 CoreHelper.AdvancedLogging.Log(" Response Intuit_Tid header: " + response_intuit_tid_header + ", Response Payload: " + response);
