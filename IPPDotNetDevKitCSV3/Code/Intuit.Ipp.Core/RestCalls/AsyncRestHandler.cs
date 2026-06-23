@@ -154,6 +154,19 @@ namespace Intuit.Ipp.Core.Rest
         }
 
         /// <summary>
+        /// Returns the response by calling REST service. The async handler does not surface the intuit_tid
+        /// (the response is delivered through callbacks, not returned here), so it is always null.
+        /// </summary>
+        /// <param name="request">The request.</param>
+        /// <param name="intuitTid">Always null for the async handler.</param>
+        /// <returns>Response from REST service.</returns>
+        public override string GetResponse(HttpWebRequest request, out string intuitTid)
+        {
+            intuitTid = null;
+            return this.GetResponse(request);
+        }
+
+        /// <summary>
         /// Returns the response stream by calling REST service.
         /// </summary>
         /// <param name="request">The request.</param>
