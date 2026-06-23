@@ -154,12 +154,20 @@ namespace Intuit.Ipp.Core.Rest
         }
 
         /// <summary>
-        /// Returns the response by calling REST service. The async handler does not surface the intuit_tid
-        /// (the response is delivered through callbacks, not returned here), so it is always null.
+        /// Returns the response by calling REST service. Always outputs a null intuit_tid.
         /// </summary>
+        /// <remarks>
+        /// The async handler cannot surface the intuit_tid synchronously: this method only kicks off the
+        /// request (<c>BeginGetResponse</c>) and returns immediately, before any response exists. The response
+        /// and its headers arrive later, in the <c>AsyncExecutionCompleted</c> callback, where the intuit_tid
+        /// header is already read for logging and attached to fault exceptions via <c>FaultHandler</c>. An
+        /// <c>out</c> parameter is assigned at return time, so there is simply nothing to hand back here.
+        /// Callers that need the intuit_tid synchronously (e.g. the attachment upload path) use
+        /// <c>SyncRestHandler</c>.
+        /// </remarks>
         /// <param name="request">The request.</param>
-        /// <param name="intuitTid">Always null for the async handler.</param>
-        /// <returns>Response from REST service.</returns>
+        /// <param name="intuitTid">Always null for the async handler — see remarks.</param>
+        /// <returns>Response from REST service (null for the async handler).</returns>
         public override string GetResponse(HttpWebRequest request, out string intuitTid)
         {
             intuitTid = null;
