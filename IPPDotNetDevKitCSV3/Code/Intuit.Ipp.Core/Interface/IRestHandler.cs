@@ -49,6 +49,15 @@ namespace Intuit.Ipp.Core.Rest
         string GetResponse(HttpWebRequest request);
 
         /// <summary>
+        /// Returns the response by calling REST service, additionally exposing the intuit_tid response header
+        /// so a caller that builds its own fault exception (e.g. from a 200 OK upload body) can attach it.
+        /// </summary>
+        /// <param name="request">The request.</param>
+        /// <param name="intuitTid">Outputs the intuit_tid response header, or null when not available.</param>
+        /// <returns>Response from REST service.</returns>
+        string GetResponse(HttpWebRequest request, out string intuitTid);
+
+        /// <summary>
         /// Returns the response as streamn by calling REST service.
         /// </summary>
         /// <param name="request">The request.</param>

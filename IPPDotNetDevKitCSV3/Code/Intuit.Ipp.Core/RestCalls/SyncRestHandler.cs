@@ -99,6 +99,23 @@ namespace Intuit.Ipp.Core.Rest
         /// <returns>Response from REST service.</returns>
         public override string GetResponse(HttpWebRequest request)
         {
+            return this.GetResponse(request, out _);
+        }
+
+        /// <summary>
+        /// Returns the response by calling REST service, additionally exposing the intuit_tid of the response.
+        /// </summary>
+        /// <remarks>
+        /// The standard <see cref="GetResponse(HttpWebRequest)"/> only attaches intuit_tid to exceptions it
+        /// throws itself. Callers that parse a fault out of a 200 OK body and build their own exception (e.g. the
+        /// attachment upload path) need the intuit_tid separately so they can attach it to that exception.
+        /// </remarks>
+        /// <param name="request">The request.</param>
+        /// <param name="intuitTid">Outputs the intuit_tid response header, or null when not present.</param>
+        /// <returns>Response from REST service.</returns>
+        public override string GetResponse(HttpWebRequest request, out string intuitTid)
+        {
+            intuitTid = null;
             FaultHandler handler = new FaultHandler(this.context);
 
             // Create a variable for storing the response.
@@ -197,6 +214,9 @@ namespace Intuit.Ipp.Core.Rest
                     throw exception;
                 }
             }
+
+            // Expose the intuit_tid so a caller that builds its own fault exception can attach it.
+            intuitTid = responseIntuitTid;
 
             // Return the response.
             return response;

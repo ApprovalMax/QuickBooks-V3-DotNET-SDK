@@ -343,6 +343,23 @@ namespace Intuit.Ipp.Core.Rest
         public abstract string GetResponse(System.Net.HttpWebRequest request);
 
         /// <summary>
+        /// Returns the response by calling REST service, additionally exposing the intuit_tid response header.
+        /// </summary>
+        /// <remarks>
+        /// Default implementation does not surface intuit_tid; handlers that can read it (e.g.
+        /// <c>SyncRestHandler</c>) override this. Allows callers that build their own fault exception
+        /// (e.g. faults parsed from a 200 OK upload body) to attach the intuit_tid to it.
+        /// </remarks>
+        /// <param name="request">The request.</param>
+        /// <param name="intuitTid">Outputs the intuit_tid response header, or null when not available.</param>
+        /// <returns>Response from REST service.</returns>
+        public virtual string GetResponse(System.Net.HttpWebRequest request, out string intuitTid)
+        {
+            intuitTid = null;
+            return this.GetResponse(request);
+        }
+
+        /// <summary>
         /// Returns the response stream by calling REST service.
         /// </summary>
         /// <param name="request">The request.</param>
