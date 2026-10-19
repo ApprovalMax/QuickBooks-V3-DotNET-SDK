@@ -22,6 +22,7 @@ namespace Intuit.Ipp.Exception
 {
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.Globalization;
     using System.Runtime.Serialization;
     using Intuit.Ipp.Exception.Properties;
 
@@ -121,7 +122,7 @@ namespace Intuit.Ipp.Exception
                     {
                         for (int i = tempException.InnerExceptions.Count - 1; i >= 0; i--)
                         {
-                            errorDetail += tempException.innerExceptions[i].Detail + " , ";
+                            errorDetail += FormatErrorDetail(tempException.innerExceptions[i]) + " , ";
                         }
 
                         this.innerExceptions = tempException.InnerExceptions;
@@ -168,7 +169,7 @@ namespace Intuit.Ipp.Exception
                 var count = innerExceptions.Count;
                 for (i = count - 1; i >= 0; i--)
                 {
-                    errorDetail += innerExceptions[i].Detail + ".";
+                    errorDetail += FormatErrorDetail(innerExceptions[i]) + ".";
                 }
 
                 if (errorDetail != null)
@@ -300,6 +301,21 @@ namespace Intuit.Ipp.Exception
                 info.AddValue("innerException", this.innerException);
                 info.AddValue("innerExceptions", this.innerExceptions);
             }
+        }
+
+        /// <summary>
+        /// Formats the detail of an error together with its error code, so a logged message names the fault.
+        /// </summary>
+        /// <param name="error">The error to format.</param>
+        /// <returns>The error detail, followed by the error code when the error carries one.</returns>
+        private static string FormatErrorDetail(IdsError error)
+        {
+            if (string.IsNullOrEmpty(error.ErrorCode))
+            {
+                return error.Detail;
+            }
+
+            return string.Format(CultureInfo.InvariantCulture, "{0} (code: {1})", error.Detail, error.ErrorCode).TrimStart();
         }
     }
 }
