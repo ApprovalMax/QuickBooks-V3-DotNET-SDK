@@ -194,5 +194,44 @@ namespace Intuit.Ipp.Exception.Test
             Assert.AreEqual(target.Message, errorMessage);
             Assert.ReferenceEquals(target.InnerExceptions, null);
         }
+
+        /// <summary>
+        ///A test for IdsException Constructor: the message names the code of each error
+        ///</summary>
+        [TestMethod()]
+        public void IdsExceptionMessageContainsErrorCodeTest()
+        {
+            string errorMessage = "Validation Exception was thrown.";
+            List<IdsError> innerExceptions = new List<IdsError> { new IdsError("Invalid property", "2010", "Name", "Property Name is invalid") };
+            IdsException target = new IdsException(errorMessage, innerExceptions);
+
+            Assert.AreEqual(errorMessage + "Details:Property Name is invalid (code: 2010).", target.Message);
+        }
+
+        /// <summary>
+        ///A test for IdsException Constructor: a fault wrapping a ValidationException names the code of each error
+        ///</summary>
+        [TestMethod()]
+        public void IdsExceptionWrappingValidationExceptionMessageContainsErrorCodeTest()
+        {
+            List<IdsError> innerExceptions = new List<IdsError> { new IdsError("Invalid property", "2010", "Name", "Property Name is invalid") };
+            ValidationException validationException = new ValidationException(innerExceptions);
+            IdsException target = new IdsException("BadRequest", "400", "source", validationException);
+
+            Assert.AreEqual("BadRequest. Details: Property Name is invalid (code: 2010) , ", target.Message);
+        }
+
+        /// <summary>
+        ///A test for IdsException Constructor: an error without detail is still named by its code
+        ///</summary>
+        [TestMethod()]
+        public void IdsExceptionMessageContainsErrorCodeWithoutDetailTest()
+        {
+            string errorMessage = "Validation Exception was thrown.";
+            List<IdsError> innerExceptions = new List<IdsError> { new IdsError("Invalid property", "2010", "Name", null) };
+            IdsException target = new IdsException(errorMessage, innerExceptions);
+
+            Assert.AreEqual(errorMessage + "Details:(code: 2010).", target.Message);
+        }
     }
 }
