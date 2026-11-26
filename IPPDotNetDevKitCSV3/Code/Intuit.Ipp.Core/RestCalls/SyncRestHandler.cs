@@ -321,7 +321,7 @@ namespace Intuit.Ipp.Core.Rest
             {
                 logger.CustomLogger.Log(
                     TraceLevel.Error,
-                    "QBooks returned a fault for {Method} {RequestUri} with status code {ResponseStatusCode}. RealmId: {RealmId} Intuit_Tid: {IntuitTid}; Headers: {Headers};  Body: {Content}.",
+                    "QBooks request {Method} {RequestUri} returned a fault with status code {ResponseStatusCode}. RealmId: {RealmId} Intuit_Tid: {IntuitTid}; Headers: {Headers};  Body: {Content}.",
                     request?.Method,
                     request?.RequestUri,
                     statusCode,
@@ -335,7 +335,7 @@ namespace Intuit.Ipp.Core.Rest
 
             logger.CustomLogger.Log(
                 TraceLevel.Error,
-                "QBooks returned a fault for {Method} {RequestUri} with status code {ResponseStatusCode}. RealmId: {RealmId} Intuit_Tid: {IntuitTid}; Headers: {Headers}.",
+                "QBooks request {Method} {RequestUri} returned a fault with status code {ResponseStatusCode}. RealmId: {RealmId} Intuit_Tid: {IntuitTid}; Headers: {Headers}.",
                 request?.Method,
                 request?.RequestUri,
                 statusCode,

@@ -249,7 +249,7 @@ namespace Intuit.Ipp.Core.Rest
 
             logger.CustomLogger.Log(
                 TraceLevel.Warning,
-                "QBooks response for {Method} {RequestUri} with status code {ResponseStatusCode}. RealmId: {RealmId} Intuit_Tid: {IntuitTid}; Headers: {Headers}.",
+                "QBooks request {Method} {RequestUri} failed with status code {ResponseStatusCode}. RealmId: {RealmId} Intuit_Tid: {IntuitTid}; Headers: {Headers}.",
                 errorResponse.Method,
                 errorResponse.ResponseUri,
                 statusCode,
