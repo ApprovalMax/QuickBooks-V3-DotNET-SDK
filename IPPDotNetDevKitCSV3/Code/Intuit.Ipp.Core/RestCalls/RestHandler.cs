@@ -65,6 +65,7 @@ namespace Intuit.Ipp.Core.Rest
             this.responseSerializer = CoreHelper.GetSerializer(this.serviceContext, false);
             this.RequestLogging = CoreHelper.GetRequestLogging(this.serviceContext);
            // this.AdvancedLogging =  CoreHelper.GetAdvancedLogging(this.serviceContext);
+            this.TrafficLogger = new QBooksTrafficLogger(this.serviceContext);
         }
 
         /// <summary>
@@ -99,6 +100,11 @@ namespace Intuit.Ipp.Core.Rest
         /// Gets or sets Request Logging.
         /// </summary>
         internal LogRequestsToDisk RequestLogging { get; set; }
+
+        /// <summary>
+        /// Gets the logger of the QBooks requests, responses and failures.
+        /// </summary>
+        internal QBooksTrafficLogger TrafficLogger { get; }
 
         ///// <summary>
         ///// Gets or sets Serilog Request Logging.
@@ -295,16 +301,7 @@ namespace Intuit.Ipp.Core.Rest
             // Add the Request Source header value.
             httpWebRequest.UserAgent = CoreConstants.REQUESTSOURCEHEADER;
 
-            if (this.serviceContext.IppConfiguration.Logger.UseVerboseLogging)
-            {
-                this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(
-                    TraceLevel.Info,
-                    "Sending request to QBooks: {RealmId} {Method} {Uri} {Content}",
-                    this.serviceContext.RealmId,
-                    httpWebRequest.Method,
-                    httpWebRequest.RequestUri,
-                    requestContentString);
-            }
+            this.TrafficLogger.LogRequest(httpWebRequest, requestContentString);
 
             // Return the created http web request.
             return httpWebRequest;

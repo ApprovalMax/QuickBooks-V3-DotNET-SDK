@@ -120,25 +120,24 @@ namespace Intuit.Ipp.Core.Rest
 
             // Create a variable for storing the response.
             string response = string.Empty;
-            // intuit_tid of the response, captured so it can be attached to a fault exception below.
-            string responseIntuitTid = null;
-            // Status code and headers of the response, captured so a fault in the response can be logged with them.
-            int responseStatusCode = 0;
-            WebHeaderCollection responseHeaders = null;
+            // What QBooks returned, captured so a fault in it can be logged and carry its intuit_tid.
+            QBooksResponse qbooksResponse = null;
             try
             {
                 // Check whether the retryPolicy is null.
                 if (this.context.IppConfiguration.RetryPolicy == null)
                 {
                     // If yes then call the rest service without retry framework enabled.
-                    response = this.CallRestService(request, out responseIntuitTid, out responseStatusCode, out responseHeaders);
+                    qbooksResponse = this.CallRestService(request);
+                    response = qbooksResponse.Body;
                 }
                 else
                 {
                     // If no then call the rest service using the execute action of retry framework.
                     this.context.IppConfiguration.RetryPolicy.ExecuteAction(() =>
                     {
-                        response = this.CallRestService(request, out responseIntuitTid, out responseStatusCode, out responseHeaders);
+                        qbooksResponse = this.CallRestService(request);
+                        response = qbooksResponse.Body;
                     });
                 }
                 if (request != null && request.RequestUri != null && request.RequestUri.Segments != null)
@@ -174,7 +173,7 @@ namespace Intuit.Ipp.Core.Rest
                 }
 
 
-                this.context.IppConfiguration.Logger.CustomLogger.Log(TraceLevel.Error, retryExceededException.ToString());
+                this.TrafficLogger.LogFailure(request, null, retryExceededException);
                 CoreHelper.AdvancedLogging.Log(retryExceededException.ToString());
 
                 throw;
@@ -211,16 +210,22 @@ namespace Intuit.Ipp.Core.Rest
             else
             {
                 // Check the response if there are any fault tags and throw appropriate exceptions.
-                IdsException exception = handler.ParseErrorResponseAndPrepareException(response, responseIntuitTid);
+                IdsException exception = handler.ParseErrorResponseAndPrepareException(response, qbooksResponse?.IntuitTid);
                 if (exception != null)
                 {
-                    this.LogFaultInSuccessfulResponse(request, responseStatusCode, responseIntuitTid, responseHeaders, response, exception);
+                    this.TrafficLogger.LogFailure(request, qbooksResponse, exception);
                     throw exception;
                 }
             }
 
+            // Null when QBooks sent no response: the FaultHandler has logged that failure.
+            if (qbooksResponse != null)
+            {
+                this.TrafficLogger.LogResponse(request, qbooksResponse);
+            }
+
             // Expose the intuit_tid so a caller that builds its own fault exception can attach it.
-            intuitTid = responseIntuitTid;
+            intuitTid = qbooksResponse?.IntuitTid;
 
             // Return the response.
             return response;
@@ -280,86 +285,19 @@ namespace Intuit.Ipp.Core.Rest
         }
 
         /// <summary>
-        /// Logs a fault that QBooks returned in a successful response (e.g. error 6041), which the
-        /// <see cref="FaultHandler"/> does not see because the call did not fail with a <see cref="WebException"/>.
-        /// The response body is only added when verbose logging is enabled.
-        /// </summary>
-        /// <param name="request">The request.</param>
-        /// <param name="statusCode">The status code of the response.</param>
-        /// <param name="intuitTid">The intuit_tid response header value.</param>
-        /// <param name="headers">The response headers.</param>
-        /// <param name="response">The response body holding the fault.</param>
-        /// <param name="exception">The exception prepared from the fault.</param>
-        private void LogFaultInSuccessfulResponse(HttpWebRequest request, int statusCode, string intuitTid, WebHeaderCollection headers, string response, IdsException exception)
-        {
-            Configuration.Logger logger = this.context.IppConfiguration.Logger;
-            string responseHeaders = headers?.ConvertHeaderToString();
-
-            if (logger.UseVerboseLogging)
-            {
-                logger.CustomLogger.Log(
-                    TraceLevel.Error,
-                    "QBooks request {Method} {RequestUri} returned a fault with status code {ResponseStatusCode}. RealmId: {RealmId} Intuit_Tid: {IntuitTid}; Exception: {Exception}; Headers: {Headers}; Body: {Content}.",
-                    request?.Method,
-                    request?.RequestUri,
-                    statusCode,
-                    this.context.RealmId,
-                    intuitTid,
-                    exception.ToString(),
-                    responseHeaders,
-                    response);
-
-                return;
-            }
-
-            logger.CustomLogger.Log(
-                TraceLevel.Error,
-                "QBooks request {Method} {RequestUri} returned a fault with status code {ResponseStatusCode}. RealmId: {RealmId} Intuit_Tid: {IntuitTid}; Exception: {Exception}; Headers: {Headers}.",
-                request?.Method,
-                request?.RequestUri,
-                statusCode,
-                this.context.RealmId,
-                intuitTid,
-                exception.ToString(),
-                responseHeaders);
-        }
-
-        /// <summary>
         /// Calls the rest service.
         /// </summary>
         /// <param name="request">The request.</param>
-        /// <param name="intuitTid">Outputs the intuit_tid response header, or null when not present.</param>
-        /// <param name="statusCode">Outputs the status code of the response.</param>
-        /// <param name="headers">Outputs the headers of the response.</param>
-        /// <returns>Returns the response.</returns>
-        private string CallRestService(HttpWebRequest request, out string intuitTid, out int statusCode, out WebHeaderCollection headers)
+        /// <returns>Returns what QBooks returned.</returns>
+        private QBooksResponse CallRestService(HttpWebRequest request)
         {
             //if (ServicePointManager.SecurityProtocol != 0)
             //    ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12;
             // Call the service and get response.
             using (HttpWebResponse httpWebResponse = request.GetResponse() as HttpWebResponse)
             {
-                intuitTid = ReadIntuitTid(httpWebResponse);
-                statusCode = (int)httpWebResponse.StatusCode;
-                headers = httpWebResponse.Headers;
-                string parsedResponse = this.ParseResponse(httpWebResponse);
                 // Parse the response from the call and return.
-                if (this.context.IppConfiguration.Logger.UseVerboseLogging)
-                {
-                    var responseHeaders = httpWebResponse.Headers.ConvertHeaderToString();
-                    this.context.IppConfiguration.Logger.CustomLogger.Log(
-                        TraceLevel.Info,
-                        "QBooks response for {Method} {RequestUri}. RealmId: {RealmId} StatusCode: {StatusCode}; Intuit_Tid: {IntuitTid}; Headers: {Headers};  Body: {Content}.",
-                        request.Method,
-                        request.RequestUri,
-                        this.context.RealmId,
-                        (int)httpWebResponse.StatusCode,
-                        intuitTid,
-                        responseHeaders,
-                        parsedResponse);
-                }
-
-                return parsedResponse;
+                return new QBooksResponse(httpWebResponse, this.ParseResponse(httpWebResponse));
             }
         }
 

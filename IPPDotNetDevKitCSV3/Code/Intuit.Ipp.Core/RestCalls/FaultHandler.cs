@@ -51,7 +51,10 @@ namespace Intuit.Ipp.Core.Rest
         /// </summary>
         private ServiceContext context;
 
-
+        /// <summary>
+        /// The logger of the failed requests.
+        /// </summary>
+        private QBooksTrafficLogger trafficLogger;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FaultHandler"/> class.
@@ -61,7 +64,7 @@ namespace Intuit.Ipp.Core.Rest
             : this()
         {
             this.context = context;
-    
+            this.trafficLogger = new QBooksTrafficLogger(context);
         }
 
         /// <summary>
@@ -136,11 +139,13 @@ namespace Intuit.Ipp.Core.Rest
                     //Log errorstring to Serilog
                     CoreHelper.AdvancedLogging.Log(" Response Intuit_Tid header: " + response_intuit_tid_header + ", Response Payload: " + errorString);
 
+                    QBooksResponse qbooksResponse = new QBooksResponse(errorResponse, errorString);
+
                     if (isIps)
                     {
                         IdsException exception = new IdsException(errorString, statusCode.ToString(CultureInfo.InvariantCulture), webException.Source);
                         AttachIntuitTid(exception, response_intuit_tid_header);
-                        this.LogErrorResponse(errorResponse, statusCode, response_intuit_tid_header, errorString, exception);
+                        this.trafficLogger.LogFailure(request, qbooksResponse, exception);
                         //CoreHelper.AdvancedLogging.Log(idsException.ToString());
                         return exception;
                     }
@@ -196,37 +201,18 @@ namespace Intuit.Ipp.Core.Rest
                     }
 
                     AttachIntuitTid(idsException, response_intuit_tid_header);
-                    this.LogErrorResponse(errorResponse, statusCode, response_intuit_tid_header, errorString, idsException);
+                    this.trafficLogger.LogFailure(request, qbooksResponse, idsException);
                 }
                 else
                 {
                     // No response, e.g. a timeout or a dropped connection: there is no fault to parse, so no exception
                     // is returned, but the failure is still logged.
-                    this.LogRequestFailedWithoutResponse(request, webException);
+                    this.trafficLogger.LogFailure(request, null, webException);
                 }
             }
 
             // Return the Ids Exception.
             return idsException;
-        }
-
-        /// <summary>
-        /// Logs a request that failed before QBooks returned a response, e.g. on a timeout or a dropped
-        /// connection. There is no fault to parse then, so without this the cause would not be logged at all:
-        /// the caller only gets an empty response.
-        /// </summary>
-        /// <param name="request">The request.</param>
-        /// <param name="webException">The exception the request failed with.</param>
-        private void LogRequestFailedWithoutResponse(HttpWebRequest request, WebException webException)
-        {
-            this.context.IppConfiguration.Logger.CustomLogger.Log(
-                TraceLevel.Error,
-                "QBooks request {Method} {RequestUri} failed without a response. RealmId: {RealmId} Status: {WebExceptionStatus}; Exception: {Exception}",
-                request?.Method,
-                request?.RequestUri,
-                this.context.RealmId,
-                webException.Status,
-                webException.ToString());
         }
 
         /// <summary>
@@ -240,50 +226,6 @@ namespace Intuit.Ipp.Core.Rest
             {
                 exception.Data[IntuitTidExceptionDataKey] = intuitTid;
             }
-        }
-
-        /// <summary>
-        /// Logs a failed QBooks request as a single line: the request, status code, realm, intuit_tid,
-        /// the exception prepared from the response and the response headers. The response body is only
-        /// added when verbose logging is enabled. Callers must not log the returned exception again.
-        /// </summary>
-        /// <param name="errorResponse">The error response.</param>
-        /// <param name="statusCode">The status code of the error response.</param>
-        /// <param name="intuitTid">The intuit_tid response header value.</param>
-        /// <param name="errorString">The error response body.</param>
-        /// <param name="exception">The exception prepared from the error response.</param>
-        private void LogErrorResponse(HttpWebResponse errorResponse, int statusCode, string intuitTid, string errorString, IdsException exception)
-        {
-            Configuration.Logger logger = this.context.IppConfiguration.Logger;
-            string responseHeaders = errorResponse.Headers.ConvertHeaderToString();
-
-            if (logger.UseVerboseLogging)
-            {
-                logger.CustomLogger.Log(
-                    TraceLevel.Error,
-                    "QBooks request {Method} {RequestUri} failed with status code {ResponseStatusCode}. RealmId: {RealmId} Intuit_Tid: {IntuitTid}; Exception: {Exception}; Headers: {Headers}; Body: {Content}.",
-                    errorResponse.Method,
-                    errorResponse.ResponseUri,
-                    statusCode,
-                    this.context.RealmId,
-                    intuitTid,
-                    exception?.ToString(),
-                    responseHeaders,
-                    errorString);
-
-                return;
-            }
-
-            logger.CustomLogger.Log(
-                TraceLevel.Error,
-                "QBooks request {Method} {RequestUri} failed with status code {ResponseStatusCode}. RealmId: {RealmId} Intuit_Tid: {IntuitTid}; Exception: {Exception}; Headers: {Headers}.",
-                errorResponse.Method,
-                errorResponse.ResponseUri,
-                statusCode,
-                this.context.RealmId,
-                intuitTid,
-                exception?.ToString(),
-                responseHeaders);
         }
 
         /// <summary>

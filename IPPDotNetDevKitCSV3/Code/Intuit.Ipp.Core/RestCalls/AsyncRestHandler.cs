@@ -372,13 +372,13 @@ namespace Intuit.Ipp.Core.Rest
                 IdsException idsException = exception as IdsException;
                 if (idsException != null)
                 {
-                    this.context.IppConfiguration.Logger.CustomLogger.Log(TraceLevel.Error, idsException.ToString());
+                    this.TrafficLogger.LogFailure(request, null, idsException);
                     CoreHelper.AdvancedLogging.Log(idsException.ToString());
                     resultArguments = new AsyncCallCompletedEventArgs(null, idsException);
                 }
                 else
                 {
-                    this.context.IppConfiguration.Logger.CustomLogger.Log(TraceLevel.Error, exception.ToString());
+                    this.TrafficLogger.LogFailure(request, null, exception);
                     CoreHelper.AdvancedLogging.Log(exception.ToString());
                     resultArguments = new AsyncCallCompletedEventArgs(null, new IdsException("Exception has been generated.", exception));
                 }
@@ -492,15 +492,17 @@ namespace Intuit.Ipp.Core.Rest
                     else
                     {
                         FaultHandler handler = new FaultHandler(this.context);
+                        QBooksResponse qbooksResponse = new QBooksResponse(response, resultString);
                         IdsException idsException = handler.ParseErrorResponseAndPrepareException(resultString);
                         if (idsException != null)
                         {
-                            this.context.IppConfiguration.Logger.CustomLogger.Log(TraceLevel.Error, idsException.ToString());
+                            this.TrafficLogger.LogFailure(request, qbooksResponse, idsException);
                             CoreHelper.AdvancedLogging.Log(idsException.ToString());
                             resultArguments = new AsyncCallCompletedEventArgs(null, idsException);
                         }
                         else
                         {
+                            this.TrafficLogger.LogResponse(request, qbooksResponse);
                             resultArguments = new AsyncCallCompletedEventArgs(resultString, null);
                         }
                     }
