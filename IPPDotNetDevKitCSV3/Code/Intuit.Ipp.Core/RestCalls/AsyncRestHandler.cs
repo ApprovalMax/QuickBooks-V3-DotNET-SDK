@@ -335,7 +335,7 @@ namespace Intuit.Ipp.Core.Rest
                       {
                           // Action to perform if the asynchronous operation
                           // failed after all the retries.
-                          resultArguments = CreateEventArgsForException(e);
+                          resultArguments = CreateEventArgsForException(e, myRequest);
                           this.OnCallCompleted(this, resultArguments);
                       });
         }
@@ -344,8 +344,9 @@ namespace Intuit.Ipp.Core.Rest
         /// Creates the Event Args for Exception/Fault responses from server.
         /// </summary>
         /// <param name="exception">The exception class.</param>
+        /// <param name="request">The request that failed.</param>
         /// <returns>Async CallCompletedEvent Arguments.</returns>
-        private AsyncCallCompletedEventArgs CreateEventArgsForException(Exception exception)
+        private AsyncCallCompletedEventArgs CreateEventArgsForException(Exception exception, HttpWebRequest request)
         {
             AsyncCallCompletedEventArgs resultArguments = null;
             WebException webException = exception as WebException;
@@ -358,8 +359,8 @@ namespace Intuit.Ipp.Core.Rest
                 }
 
                 FaultHandler handler = new FaultHandler(this.context);
-                // The FaultHandler has already logged the failure with the exception: do not log it again.
-                IdsException idsException = handler.ParseResponseAndThrowException(webException, isIps);
+                // The FaultHandler has already logged the failure, with or without a response: do not log it again.
+                IdsException idsException = handler.ParseResponseAndThrowException(webException, request, isIps);
                 if (idsException != null)
                 {
                     CoreHelper.AdvancedLogging.Log(idsException.ToString());
@@ -577,7 +578,7 @@ namespace Intuit.Ipp.Core.Rest
             }
             catch (WebException webException)
             {
-                resultArguments = this.CreateEventArgsForException(webException);
+                resultArguments = this.CreateEventArgsForException(webException, result.AsyncState as HttpWebRequest);
                 this.OnCallCompleted(this, resultArguments);
             }
         }

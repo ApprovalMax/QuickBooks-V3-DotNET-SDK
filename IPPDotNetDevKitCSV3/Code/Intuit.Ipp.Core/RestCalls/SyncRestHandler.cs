@@ -190,15 +190,13 @@ namespace Intuit.Ipp.Core.Rest
                     isIps = true;
                 }
 
-                // The FaultHandler has already logged the failure with the exception: do not log it again.
-                IdsException idsException = handler.ParseResponseAndThrowException(webException, isIps);
+                // The FaultHandler has already logged the failure, with or without a response: do not log it again.
+                IdsException idsException = handler.ParseResponseAndThrowException(webException, request, isIps);
                 if (idsException != null)
                 {
                     CoreHelper.AdvancedLogging.Log(idsException.ToString());
                     throw idsException;
                 }
-
-                this.LogRequestFailedWithoutResponse(request, webException);
             }
             finally
             {
@@ -265,15 +263,13 @@ namespace Intuit.Ipp.Core.Rest
                     isIps = true;
                 }
 
-                // The FaultHandler has already logged the failure with the exception: do not log it again.
-                IdsException idsException = handler.ParseResponseAndThrowException(webException, isIps);
+                // The FaultHandler has already logged the failure, with or without a response: do not log it again.
+                IdsException idsException = handler.ParseResponseAndThrowException(webException, request, isIps);
                 if (idsException != null)
                 {
                     CoreHelper.AdvancedLogging.Log(idsException.ToString());
                     throw idsException;
                 }
-
-                this.LogRequestFailedWithoutResponse(request, webException);
             }
             finally
             {
@@ -281,25 +277,6 @@ namespace Intuit.Ipp.Core.Rest
             }
 
             return receivedBytes;
-        }
-
-        /// <summary>
-        /// Logs a request that failed before QBooks returned a response, e.g. on a timeout or a dropped
-        /// connection. There is no fault to parse then, so without this the cause would not be logged at all:
-        /// the caller only gets an empty response.
-        /// </summary>
-        /// <param name="request">The request.</param>
-        /// <param name="webException">The exception the request failed with.</param>
-        private void LogRequestFailedWithoutResponse(HttpWebRequest request, WebException webException)
-        {
-            this.context.IppConfiguration.Logger.CustomLogger.Log(
-                TraceLevel.Error,
-                "QBooks request {Method} {RequestUri} failed without a response. RealmId: {RealmId} Status: {WebExceptionStatus}; Exception: {Exception}",
-                request?.Method,
-                request?.RequestUri,
-                this.context.RealmId,
-                webException.Status,
-                webException.ToString());
         }
 
         /// <summary>
