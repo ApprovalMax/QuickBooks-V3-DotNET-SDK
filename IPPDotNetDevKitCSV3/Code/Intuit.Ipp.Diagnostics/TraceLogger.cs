@@ -23,8 +23,10 @@ namespace Intuit.Ipp.Diagnostics
 {
     using System;
     using System.Diagnostics;
+    using System.Globalization;
     using System.IO;
     using System.Text;
+    using System.Text.RegularExpressions;
 
     /// <summary>
     /// Logs trace messages using System.Diagnostics.
@@ -35,6 +37,11 @@ namespace Intuit.Ipp.Diagnostics
         /// Provides a multilevel switch to control tracing.
         /// </summary>
         private TraceSwitch traceSwitch;
+
+        /// <summary>
+        /// Matches a named placeholder of a message template, e.g. {RequestUri}.
+        /// </summary>
+        private static readonly Regex TemplatePlaceholder = new Regex(@"\{\w+\}", RegexOptions.Compiled);
 
         /// <summary>
         /// Initializes a new instance of the TraceLogger class.
@@ -67,24 +74,50 @@ namespace Intuit.Ipp.Diagnostics
             logMessage.Append(string.Format(System.Globalization.CultureInfo.InvariantCulture, "{0} -- ", idsTraceLevel.ToString()));
             logMessage.Append(DateTime.Now.ToString("MM-dd-yyyy HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture) + " -- ");
             string fileName = Path.GetFileName(sf.GetFileName());
-            logMessage.Append(fileName + " - " + sf.GetFileLineNumber() + " - " + sf.GetMethod() + " - " + messageToWrite);
+            logMessage.Append(fileName + " - " + sf.GetFileLineNumber() + " - " + sf.GetMethod() + " - " + RenderTemplate(messageToWrite, args));
+
+            // The message is already rendered: the Trace overloads that take arguments would run it through
+            // string.Format, which throws on a named placeholder or on the braces of a logged JSON body.
             switch (idsTraceLevel)
             {
                 case TraceLevel.Info:
-                    Trace.TraceInformation(logMessage.ToString(), args);
+                    Trace.TraceInformation(logMessage.ToString());
                     break;
                 case TraceLevel.Verbose:
                     Trace.WriteLine(logMessage.ToString());
                     break;
                 case TraceLevel.Warning:
-                    Trace.TraceWarning(logMessage.ToString(), args);
+                    Trace.TraceWarning(logMessage.ToString());
                     break;
                 case TraceLevel.Error:
-                    Trace.TraceError(logMessage.ToString(), args);
+                    Trace.TraceError(logMessage.ToString());
                     break;
                 case TraceLevel.Off:
                     break;
             }
+        }
+
+        /// <summary>
+        /// Renders a message template such as "Request {Method} {RequestUri}" by substituting its named
+        /// placeholders with the arguments in order, the way structured loggers do.
+        /// </summary>
+        /// <param name="messageTemplate">The message template.</param>
+        /// <param name="args">The arguments, one per placeholder.</param>
+        /// <returns>The rendered message; the template as is when there are no arguments.</returns>
+        private static string RenderTemplate(string messageTemplate, object?[] args)
+        {
+            if (messageTemplate == null || args == null || args.Length == 0)
+            {
+                return messageTemplate;
+            }
+
+            int argumentIndex = 0;
+
+            return TemplatePlaceholder.Replace(
+                messageTemplate,
+                placeholder => argumentIndex < args.Length
+                    ? Convert.ToString(args[argumentIndex++], CultureInfo.InvariantCulture) ?? string.Empty
+                    : placeholder.Value);
         }
     }
 }

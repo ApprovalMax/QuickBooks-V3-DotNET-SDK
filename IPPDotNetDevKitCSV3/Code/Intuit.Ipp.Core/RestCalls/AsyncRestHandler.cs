@@ -377,8 +377,8 @@ namespace Intuit.Ipp.Core.Rest
                 }
                 else
                 {
-                    this.context.IppConfiguration.Logger.CustomLogger.Log(TraceLevel.Error, idsException.ToString());
-                    CoreHelper.AdvancedLogging.Log(idsException.ToString());
+                    this.context.IppConfiguration.Logger.CustomLogger.Log(TraceLevel.Error, exception.ToString());
+                    CoreHelper.AdvancedLogging.Log(exception.ToString());
                     resultArguments = new AsyncCallCompletedEventArgs(null, new IdsException("Exception has been generated.", exception));
                 }
             }

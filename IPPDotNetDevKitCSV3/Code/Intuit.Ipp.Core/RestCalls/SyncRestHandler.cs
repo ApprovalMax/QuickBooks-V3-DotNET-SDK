@@ -122,20 +122,23 @@ namespace Intuit.Ipp.Core.Rest
             string response = string.Empty;
             // intuit_tid of the response, captured so it can be attached to a fault exception below.
             string responseIntuitTid = null;
+            // Status code and headers of the response, captured so a fault in the response can be logged with them.
+            int responseStatusCode = 0;
+            WebHeaderCollection responseHeaders = null;
             try
             {
                 // Check whether the retryPolicy is null.
                 if (this.context.IppConfiguration.RetryPolicy == null)
                 {
                     // If yes then call the rest service without retry framework enabled.
-                    response = this.CallRestService(request, out responseIntuitTid);
+                    response = this.CallRestService(request, out responseIntuitTid, out responseStatusCode, out responseHeaders);
                 }
                 else
                 {
                     // If no then call the rest service using the execute action of retry framework.
                     this.context.IppConfiguration.RetryPolicy.ExecuteAction(() =>
                     {
-                        response = this.CallRestService(request, out responseIntuitTid);
+                        response = this.CallRestService(request, out responseIntuitTid, out responseStatusCode, out responseHeaders);
                     });
                 }
                 if (request != null && request.RequestUri != null && request.RequestUri.Segments != null)
@@ -194,6 +197,8 @@ namespace Intuit.Ipp.Core.Rest
                     CoreHelper.AdvancedLogging.Log(idsException.ToString());
                     throw idsException;
                 }
+
+                this.LogRequestFailedWithoutResponse(request, webException);
             }
             finally
             {
@@ -211,6 +216,7 @@ namespace Intuit.Ipp.Core.Rest
                 IdsException exception = handler.ParseErrorResponseAndPrepareException(response, responseIntuitTid);
                 if (exception != null)
                 {
+                    this.LogFaultInSuccessfulResponse(request, responseStatusCode, responseIntuitTid, responseHeaders, response);
                     throw exception;
                 }
             }
@@ -266,6 +272,8 @@ namespace Intuit.Ipp.Core.Rest
                     CoreHelper.AdvancedLogging.Log(idsException.ToString());
                     throw idsException;
                 }
+
+                this.LogRequestFailedWithoutResponse(request, webException);
             }
             finally
             {
@@ -276,12 +284,75 @@ namespace Intuit.Ipp.Core.Rest
         }
 
         /// <summary>
+        /// Logs a request that failed before QBooks returned a response, e.g. on a timeout or a dropped
+        /// connection. There is no fault to parse then, so without this the cause would not be logged at all:
+        /// the caller only gets an empty response.
+        /// </summary>
+        /// <param name="request">The request.</param>
+        /// <param name="webException">The exception the request failed with.</param>
+        private void LogRequestFailedWithoutResponse(HttpWebRequest request, WebException webException)
+        {
+            this.context.IppConfiguration.Logger.CustomLogger.Log(
+                TraceLevel.Error,
+                "QBooks request {Method} {RequestUri} failed without a response. RealmId: {RealmId} Status: {WebExceptionStatus}; Exception: {Exception}",
+                request?.Method,
+                request?.RequestUri,
+                this.context.RealmId,
+                webException.Status,
+                webException.ToString());
+        }
+
+        /// <summary>
+        /// Logs a fault that QBooks returned in a successful response (e.g. error 6041), which the
+        /// <see cref="FaultHandler"/> does not see because the call did not fail with a <see cref="WebException"/>.
+        /// The response body is only added when verbose logging is enabled.
+        /// </summary>
+        /// <param name="request">The request.</param>
+        /// <param name="statusCode">The status code of the response.</param>
+        /// <param name="intuitTid">The intuit_tid response header value.</param>
+        /// <param name="headers">The response headers.</param>
+        /// <param name="response">The response body holding the fault.</param>
+        private void LogFaultInSuccessfulResponse(HttpWebRequest request, int statusCode, string intuitTid, WebHeaderCollection headers, string response)
+        {
+            Configuration.Logger logger = this.context.IppConfiguration.Logger;
+            string responseHeaders = headers?.ConvertHeaderToString();
+
+            if (logger.UseVerboseLogging)
+            {
+                logger.CustomLogger.Log(
+                    TraceLevel.Error,
+                    "QBooks returned a fault for {Method} {RequestUri} with status code {ResponseStatusCode}. RealmId: {RealmId} Intuit_Tid: {IntuitTid}; Headers: {Headers};  Body: {Content}.",
+                    request?.Method,
+                    request?.RequestUri,
+                    statusCode,
+                    this.context.RealmId,
+                    intuitTid,
+                    responseHeaders,
+                    response);
+
+                return;
+            }
+
+            logger.CustomLogger.Log(
+                TraceLevel.Error,
+                "QBooks returned a fault for {Method} {RequestUri} with status code {ResponseStatusCode}. RealmId: {RealmId} Intuit_Tid: {IntuitTid}; Headers: {Headers}.",
+                request?.Method,
+                request?.RequestUri,
+                statusCode,
+                this.context.RealmId,
+                intuitTid,
+                responseHeaders);
+        }
+
+        /// <summary>
         /// Calls the rest service.
         /// </summary>
         /// <param name="request">The request.</param>
         /// <param name="intuitTid">Outputs the intuit_tid response header, or null when not present.</param>
+        /// <param name="statusCode">Outputs the status code of the response.</param>
+        /// <param name="headers">Outputs the headers of the response.</param>
         /// <returns>Returns the response.</returns>
-        private string CallRestService(HttpWebRequest request, out string intuitTid)
+        private string CallRestService(HttpWebRequest request, out string intuitTid, out int statusCode, out WebHeaderCollection headers)
         {
             //if (ServicePointManager.SecurityProtocol != 0)
             //    ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12;
@@ -289,6 +360,8 @@ namespace Intuit.Ipp.Core.Rest
             using (HttpWebResponse httpWebResponse = request.GetResponse() as HttpWebResponse)
             {
                 intuitTid = ReadIntuitTid(httpWebResponse);
+                statusCode = (int)httpWebResponse.StatusCode;
+                headers = httpWebResponse.Headers;
                 string parsedResponse = this.ParseResponse(httpWebResponse);
                 // Parse the response from the call and return.
                 if (this.context.IppConfiguration.Logger.UseVerboseLogging)
