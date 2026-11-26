@@ -358,10 +358,10 @@ namespace Intuit.Ipp.Core.Rest
                 }
 
                 FaultHandler handler = new FaultHandler(this.context);
+                // The FaultHandler has already logged the failure with the exception: do not log it again.
                 IdsException idsException = handler.ParseResponseAndThrowException(webException, isIps);
                 if (idsException != null)
                 {
-                    this.context.IppConfiguration.Logger.CustomLogger.Log(TraceLevel.Error, idsException.ToString());
                     CoreHelper.AdvancedLogging.Log(idsException.ToString());
                     resultArguments = new AsyncCallCompletedEventArgs(null, idsException);
                 }

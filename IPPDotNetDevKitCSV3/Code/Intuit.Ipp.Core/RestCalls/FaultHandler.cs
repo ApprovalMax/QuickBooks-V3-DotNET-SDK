@@ -135,13 +135,11 @@ namespace Intuit.Ipp.Core.Rest
                     //Log errorstring to Serilog
                     CoreHelper.AdvancedLogging.Log(" Response Intuit_Tid header: " + response_intuit_tid_header + ", Response Payload: " + errorString);
 
-                    this.LogErrorResponse(errorResponse, statusCode, response_intuit_tid_header, errorString);
-
                     if (isIps)
                     {
                         IdsException exception = new IdsException(errorString, statusCode.ToString(CultureInfo.InvariantCulture), webException.Source);
                         AttachIntuitTid(exception, response_intuit_tid_header);
-                        this.context.IppConfiguration.Logger.CustomLogger.Log(TraceLevel.Error, exception.ToString());
+                        this.LogErrorResponse(errorResponse, statusCode, response_intuit_tid_header, errorString, exception);
                         //CoreHelper.AdvancedLogging.Log(idsException.ToString());
                         return exception;
                     }
@@ -197,6 +195,7 @@ namespace Intuit.Ipp.Core.Rest
                     }
 
                     AttachIntuitTid(idsException, response_intuit_tid_header);
+                    this.LogErrorResponse(errorResponse, statusCode, response_intuit_tid_header, errorString, idsException);
                 }
             }
 
@@ -218,15 +217,16 @@ namespace Intuit.Ipp.Core.Rest
         }
 
         /// <summary>
-        /// Logs a QBooks error response. The request, status code, realm, intuit_tid and response headers
-        /// are logged even when verbose logging is disabled; the response body is only added when verbose
-        /// logging is enabled.
+        /// Logs a failed QBooks request as a single line: the request, status code, realm, intuit_tid,
+        /// the exception prepared from the response and the response headers. The response body is only
+        /// added when verbose logging is enabled. Callers must not log the returned exception again.
         /// </summary>
         /// <param name="errorResponse">The error response.</param>
         /// <param name="statusCode">The status code of the error response.</param>
         /// <param name="intuitTid">The intuit_tid response header value.</param>
         /// <param name="errorString">The error response body.</param>
-        private void LogErrorResponse(HttpWebResponse errorResponse, int statusCode, string intuitTid, string errorString)
+        /// <param name="exception">The exception prepared from the error response.</param>
+        private void LogErrorResponse(HttpWebResponse errorResponse, int statusCode, string intuitTid, string errorString, IdsException exception)
         {
             Configuration.Logger logger = this.context.IppConfiguration.Logger;
             string responseHeaders = errorResponse.Headers.ConvertHeaderToString();
@@ -234,13 +234,14 @@ namespace Intuit.Ipp.Core.Rest
             if (logger.UseVerboseLogging)
             {
                 logger.CustomLogger.Log(
-                    TraceLevel.Warning,
-                    "QBooks response for {Method} {RequestUri} with status code {ResponseStatusCode}. RealmId: {RealmId} Intuit_Tid: {IntuitTid}; Headers: {Headers};  Body: {Content}.",
+                    TraceLevel.Error,
+                    "QBooks request {Method} {RequestUri} failed with status code {ResponseStatusCode}. RealmId: {RealmId} Intuit_Tid: {IntuitTid}; Exception: {Exception}; Headers: {Headers}; Body: {Content}.",
                     errorResponse.Method,
                     errorResponse.ResponseUri,
                     statusCode,
                     this.context.RealmId,
                     intuitTid,
+                    exception?.ToString(),
                     responseHeaders,
                     errorString);
 
@@ -248,13 +249,14 @@ namespace Intuit.Ipp.Core.Rest
             }
 
             logger.CustomLogger.Log(
-                TraceLevel.Warning,
-                "QBooks request {Method} {RequestUri} failed with status code {ResponseStatusCode}. RealmId: {RealmId} Intuit_Tid: {IntuitTid}; Headers: {Headers}.",
+                TraceLevel.Error,
+                "QBooks request {Method} {RequestUri} failed with status code {ResponseStatusCode}. RealmId: {RealmId} Intuit_Tid: {IntuitTid}; Exception: {Exception}; Headers: {Headers}.",
                 errorResponse.Method,
                 errorResponse.ResponseUri,
                 statusCode,
                 this.context.RealmId,
                 intuitTid,
+                exception?.ToString(),
                 responseHeaders);
         }
 

@@ -190,10 +190,10 @@ namespace Intuit.Ipp.Core.Rest
                     isIps = true;
                 }
 
+                // The FaultHandler has already logged the failure with the exception: do not log it again.
                 IdsException idsException = handler.ParseResponseAndThrowException(webException, isIps);
                 if (idsException != null)
                 {
-                    this.context.IppConfiguration.Logger.CustomLogger.Log(TraceLevel.Error, idsException.ToString());
                     CoreHelper.AdvancedLogging.Log(idsException.ToString());
                     throw idsException;
                 }
@@ -216,7 +216,7 @@ namespace Intuit.Ipp.Core.Rest
                 IdsException exception = handler.ParseErrorResponseAndPrepareException(response, responseIntuitTid);
                 if (exception != null)
                 {
-                    this.LogFaultInSuccessfulResponse(request, responseStatusCode, responseIntuitTid, responseHeaders, response);
+                    this.LogFaultInSuccessfulResponse(request, responseStatusCode, responseIntuitTid, responseHeaders, response, exception);
                     throw exception;
                 }
             }
@@ -265,10 +265,10 @@ namespace Intuit.Ipp.Core.Rest
                     isIps = true;
                 }
 
+                // The FaultHandler has already logged the failure with the exception: do not log it again.
                 IdsException idsException = handler.ParseResponseAndThrowException(webException, isIps);
                 if (idsException != null)
                 {
-                    this.context.IppConfiguration.Logger.CustomLogger.Log(TraceLevel.Error, idsException.ToString());
                     CoreHelper.AdvancedLogging.Log(idsException.ToString());
                     throw idsException;
                 }
@@ -312,7 +312,8 @@ namespace Intuit.Ipp.Core.Rest
         /// <param name="intuitTid">The intuit_tid response header value.</param>
         /// <param name="headers">The response headers.</param>
         /// <param name="response">The response body holding the fault.</param>
-        private void LogFaultInSuccessfulResponse(HttpWebRequest request, int statusCode, string intuitTid, WebHeaderCollection headers, string response)
+        /// <param name="exception">The exception prepared from the fault.</param>
+        private void LogFaultInSuccessfulResponse(HttpWebRequest request, int statusCode, string intuitTid, WebHeaderCollection headers, string response, IdsException exception)
         {
             Configuration.Logger logger = this.context.IppConfiguration.Logger;
             string responseHeaders = headers?.ConvertHeaderToString();
@@ -321,12 +322,13 @@ namespace Intuit.Ipp.Core.Rest
             {
                 logger.CustomLogger.Log(
                     TraceLevel.Error,
-                    "QBooks request {Method} {RequestUri} returned a fault with status code {ResponseStatusCode}. RealmId: {RealmId} Intuit_Tid: {IntuitTid}; Headers: {Headers};  Body: {Content}.",
+                    "QBooks request {Method} {RequestUri} returned a fault with status code {ResponseStatusCode}. RealmId: {RealmId} Intuit_Tid: {IntuitTid}; Exception: {Exception}; Headers: {Headers}; Body: {Content}.",
                     request?.Method,
                     request?.RequestUri,
                     statusCode,
                     this.context.RealmId,
                     intuitTid,
+                    exception.ToString(),
                     responseHeaders,
                     response);
 
@@ -335,12 +337,13 @@ namespace Intuit.Ipp.Core.Rest
 
             logger.CustomLogger.Log(
                 TraceLevel.Error,
-                "QBooks request {Method} {RequestUri} returned a fault with status code {ResponseStatusCode}. RealmId: {RealmId} Intuit_Tid: {IntuitTid}; Headers: {Headers}.",
+                "QBooks request {Method} {RequestUri} returned a fault with status code {ResponseStatusCode}. RealmId: {RealmId} Intuit_Tid: {IntuitTid}; Exception: {Exception}; Headers: {Headers}.",
                 request?.Method,
                 request?.RequestUri,
                 statusCode,
                 this.context.RealmId,
                 intuitTid,
+                exception.ToString(),
                 responseHeaders);
         }
 
